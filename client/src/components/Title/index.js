@@ -1,3 +1,5 @@
+import './title.scss';
+
 export default class Title {
   constructor($parent) {
     this.$parent = $parent;
@@ -9,8 +11,8 @@ export default class Title {
 
   getTitleTemplate() {
     return `
-            <header>
-                <h1 class="header__title">Todo</h1>
+            <header class='header'>
+                <h1 class='header__title'>TO-DO LIST</h1>
             </header> 
         `;
   }
