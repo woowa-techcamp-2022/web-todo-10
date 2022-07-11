@@ -1,9 +1,7 @@
-const a = () => {
-  console.log('hi');
-};
+import './index.scss';
 
-class Test {
-  constructor(name) {
-    this.name = name;
-  }
+function main() {
+  console.log('hi');
 }
+
+main();
