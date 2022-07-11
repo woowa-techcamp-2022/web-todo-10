@@ -27,7 +27,10 @@ module.exports = {
   watch: true,
   devtool: 'eval',
   resolve: {
-    alias: { '@': path.resolve(__dirname, 'src') },
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      '@style': path.resolve(__dirname, 'src', 'style'),
+    },
     extensions: ['.js', '.scss'],
   },
   plugins: [
