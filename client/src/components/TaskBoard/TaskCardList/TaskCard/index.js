@@ -34,9 +34,7 @@ export default class TaskCard {
 
   #getTaskDetailTemplate(details) {
     return details
-      .map((detail) => {
-        `<li class="taskCard__detail">${detail}</li>`;
-      })
+      .map((detail) => `<li class="taskCard__detail">${detail}</li>`)
       .join('');
   }
 }

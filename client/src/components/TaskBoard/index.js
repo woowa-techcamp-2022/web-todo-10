@@ -18,7 +18,7 @@ export default class TaskBoard {
   }
 
   #render() {
-    this.$parent.append(this.#$taskCardList);
+    this.$parent.append(this.#$taskBoard);
   }
 
   #mountTaskLists() {
