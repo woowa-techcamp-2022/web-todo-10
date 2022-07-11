@@ -17,7 +17,7 @@ export default class TaskCard {
 
   #render() {
     this.#$taskCard.innerHTML = this.#getInnerTemplate();
-    this.$parent.append(this.$taskCard);
+    this.$parent.append(this.#$taskCard);
   }
 
   #getInnerTemplate() {
