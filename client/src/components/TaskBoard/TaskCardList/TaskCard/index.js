@@ -1,23 +1,27 @@
 import './index.scss';
 
 export default class TaskCard {
-  #$parent;
-  #cardData;
+  #$taskCard;
 
   constructor($parent, cardData) {
-    this.#$parent = $parent;
-    this.#cardData = cardData;
-    this.$taskCard = document.createElement('div');
+    this.$parent = $parent;
+    this.cardData = cardData;
+    this.#makeDOM();
+    this.#render();
   }
 
-  render() {
-    this.$taskCard.className = 'taskCard';
-    this.$taskCard.innerHTML = this.#getInnerTemplate();
-    this.#$parent.append(this.$taskCard);
+  #makeDOM() {
+    this.#$taskCard = document.createElement('div');
+    this.#$taskCard.className = 'taskCard';
+  }
+
+  #render() {
+    this.#$taskCard.innerHTML = this.#getInnerTemplate();
+    this.$parent.append(this.$taskCard);
   }
 
   #getInnerTemplate() {
-    const { title, details, author } = this.#cardData;
+    const { title, details, author } = this.cardData;
     return `
         <h3 class="taskCard__title">${title}</h3>
         <ul class="taskCard__detail-container">
