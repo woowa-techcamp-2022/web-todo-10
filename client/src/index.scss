@@ -19,78 +19,78 @@ body {
   }
 }
 
-.task {
-  &-board {
-    display: flex;
-    gap: 1rem;
-  }
+// .task {
+//   &-board {
+//     display: flex;
+//     gap: 1rem;
+//   }
 
-  &-list {
-    width: $task-list-width;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+//   &-list {
+//     width: $task-list-width;
+//     display: flex;
+//     flex-direction: column;
+//     gap: 1rem;
 
-    &__header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+//     &__header {
+//       display: flex;
+//       justify-content: space-between;
+//       align-items: center;
+//     }
 
-    &__info {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-weight: $bold;
-    }
+//     &__info {
+//       display: flex;
+//       align-items: center;
+//       gap: 0.5rem;
+//       font-weight: $bold;
+//     }
 
-    &__title {
-      font-size: 1.125rem;
-    }
+//     &__title {
+//       font-size: 1.125rem;
+//     }
 
-    &__count {
-      width: 1.625rem;
-      height: 1.625rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background-color: $darkgrey;
-      border-radius: 50%;
-      font-size: 0.875rem;
-    }
+//     &__count {
+//       width: 1.625rem;
+//       height: 1.625rem;
+//       display: flex;
+//       justify-content: center;
+//       align-items: center;
+//       background-color: $darkgrey;
+//       border-radius: 50%;
+//       font-size: 0.875rem;
+//     }
 
-    &__utils {
-      display: flex;
-      gap: 0.5rem;
-    }
-  }
-}
+//     &__utils {
+//       display: flex;
+//       gap: 0.5rem;
+//     }
+//   }
+// }
 
-.taskCard {
-  position: relative;
-  padding: 1rem;
-  background-color: $white;
-  border-radius: 0.375rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+// .taskCard {
+//   position: relative;
+//   padding: 1rem;
+//   background-color: $white;
+//   border-radius: 0.375rem;
+//   display: flex;
+//   flex-direction: column;
+//   gap: 0.5rem;
 
-  &__title {
-    font-weight: $bold;
-  }
+//   &__title {
+//     font-weight: $bold;
+//   }
 
-  &__task {
-    font-size: 0.875rem;
-  }
+//   &__task {
+//     font-size: 0.875rem;
+//   }
 
-  &__author {
-    font-size: 0.75rem;
-    color: $darkgrey;
-  }
+//   &__author {
+//     font-size: 0.75rem;
+//     color: $darkgrey;
+//   }
 
-  &__delete-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-  }
-}
+//   &__delete-btn {
+//     position: absolute;
+//     top: 1rem;
+//     right: 1rem;
+//   }
+// }
