@@ -1,6 +1,6 @@
 import './index.scss';
 
-export default class Title {
+export default class Header {
   constructor($parent) {
     this.$parent = $parent;
   }
@@ -13,6 +13,7 @@ export default class Title {
     return `
             <header class='header'>
                 <h1 class='header__title'>TO-DO LIST</h1>
+                <button class='header__menu-btn'></button>
             </header> 
         `;
   }

@@ -1,11 +1,11 @@
 import './index.scss';
-import Title from '@/components/Title';
+import Header from '@/components/Header';
 
 function main() {
   const $app = document.querySelector('#app');
-  const title = new Title($app);
+  const header = new Header($app);
 
-  title.render();
+  header.render();
 }
 
 main();
