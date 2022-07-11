@@ -22,6 +22,10 @@ module.exports = {
         loader: 'babel-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /\.png/,
+        type: 'asset/inline',
+      },
     ],
   },
   watch: true,
@@ -30,6 +34,7 @@ module.exports = {
     alias: {
       '@': path.resolve(__dirname, 'src'),
       '@style': path.resolve(__dirname, 'src', 'style'),
+      '@imgs': path.resolve(__dirname, 'src', 'imgs'),
     },
     extensions: ['.js', '.scss'],
   },

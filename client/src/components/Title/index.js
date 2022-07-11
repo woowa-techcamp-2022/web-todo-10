@@ -1,4 +1,4 @@
-import './title.scss';
+import './index.scss';
 
 export default class Title {
   constructor($parent) {
@@ -6,10 +6,10 @@ export default class Title {
   }
 
   render() {
-    this.$parent.insertAdjacentHTML('beforeend', this.getTitleTemplate());
+    this.$parent.insertAdjacentHTML('afterbegin', this.#getTitleTemplate());
   }
 
-  getTitleTemplate() {
+  #getTitleTemplate() {
     return `
             <header class='header'>
                 <h1 class='header__title'>TO-DO LIST</h1>

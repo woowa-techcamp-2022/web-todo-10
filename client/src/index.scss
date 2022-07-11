@@ -3,4 +3,62 @@
 
 body {
   background-color: $background-color;
+  padding: 2rem 5rem;
+}
+
+.task {
+  &-board {
+    display: flex;
+    gap: 1rem;
+  }
+
+  &-list {
+    width: $task-list-width;
+
+    &__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    &__info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+    }
+
+    &__title {
+      font-size: 1.125rem;
+    }
+
+    &__count {
+      width: 1.625rem;
+      height: 1.625rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: $darkgrey;
+      border-radius: 50%;
+      font-size: 0.875rem;
+    }
+
+    &__utils {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    &__btn {
+      width: 1.5rem;
+      height: 1.5rem;
+
+      &--add {
+        background: url(@imgs/plus.png) no-repeat center;
+      }
+
+      &--delete {
+        background: url(@imgs/delete.png) no-repeat center;
+      }
+    }
+  }
 }
