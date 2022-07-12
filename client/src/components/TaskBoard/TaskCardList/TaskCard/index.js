@@ -1,7 +1,7 @@
 import './index.scss';
 
 export const makeTaskCardElement = (cardData) => {
-  const $taskCard = document.createElement('div');
+  const $taskCard = document.createElement('li');
   $taskCard.className = 'taskCard';
   $taskCard.innerHTML = getTaskCardInnerTemplate(cardData);
   return $taskCard;
