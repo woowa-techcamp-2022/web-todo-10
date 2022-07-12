@@ -1,15 +1,15 @@
 import './index.scss';
-
+import { makeTaskCardElement } from '../TaskCard';
 export const makeEditingTaskCardElement = (originalCardData = {}) => {
   const $editingTaskCard = document.createElement('div');
   $editingTaskCard.className = 'taskCard editing';
   $editingTaskCard.innerHTML = getInnerTemplate(originalCardData);
-  activateElement($editingTaskCard);
+  activateElement($editingTaskCard, originalCardData);
   return $editingTaskCard;
 };
 
 const getInnerTemplate = (originalCardData = {}) => {
-  const { title, details } = originalCardData;
+  const { title, details, author } = originalCardData;
   return `
       <input type = "text" class="taskCard__title editing" placeholder="제목을 입력하세요" value=${
         title ? title : ''
@@ -27,11 +27,15 @@ const getEditingTaskDetailTemplate = (details) => {
   return `<textarea placeholder="내용을 입력하세요" class="taskCard__detail--editing">${originalDetailContent}</textarea>`;
 };
 
-const activateElement = ($editingTaskCard) => {
+const activateElement = ($editingTaskCard, originalCardData) => {
   const $cancelBtn = $editingTaskCard.querySelector('.util__btn--cancel');
-  $cancelBtn.addEventListener('click', cancelEdit.bind(null, $editingTaskCard));
+  $cancelBtn.addEventListener(
+    'click',
+    cancelEdit.bind(null, $editingTaskCard, originalCardData)
+  );
 };
 
-const cancelEdit = ($editingTaskCard) => {
-  $editingTaskCard.remove();
+const cancelEdit = ($editingTaskCard, originalCardData) => {
+  const $taskCardElement = makeTaskCardElement(originalCardData);
+  $editingTaskCard.parentNode.replaceChild($taskCardElement, $editingTaskCard);
 };
