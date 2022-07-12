@@ -8,19 +8,20 @@ export default class TaskCardList {
   constructor($parent, cardListData) {
     this.$parent = $parent;
     this.cardListData = cardListData;
-    this.#makeDOM();
+    this.#makeTaskCardListElement();
+    this.#makeTaskCards();
   }
 
   render() {
     this.#$taskCardList.innerHTML = this.#getInnerTemplate();
     this.#mountTaskCards();
-    //this.#activate();
+    this.#activate();
+    this.$parent.append(this.#$taskCardList);
   }
 
-  #makeDOM() {
+  #makeTaskCardListElement() {
     this.#$taskCardList = document.createElement('section');
     this.#$taskCardList.className = 'taskcard-list';
-    this.$parent.append(this.#$taskCardList);
   }
 
   #getInnerTemplate() {
@@ -39,7 +40,6 @@ export default class TaskCardList {
   }
 
   #mountTaskCards() {
-    this.#makeTaskCards();
     this.#taskCards.forEach((taskCard) => taskCard.render());
   }
 
@@ -51,20 +51,20 @@ export default class TaskCardList {
     );
   }
 
-  // #activate() {
-  //   this.#activateAddBtn();
-  // }
+  #activate() {
+    this.#activateAddBtn();
+  }
 
-  // #activateAddBtn() {
-  //   const $addBtn = this.#$taskCardList.querySelector(
-  //     '.taskcard-list__add-btn'
-  //   );
-  //   $addBtn.addEventListener('click', () => this.#addNewTaskCard());
-  // }
+  #activateAddBtn() {
+    const $addBtn = this.#$taskCardList.querySelector(
+      '.taskcard-list__add-btn'
+    );
+    $addBtn.addEventListener('click', () => this.#addNewTaskCard());
+  }
 
-  // #addNewTaskCard() {
-  //   const newTaskCard = new Ed();
-  //   this.#taskCards.unshift(newTaskCard);
-  //   this.#taskCards.forEach((taskCard) => taskCard.render());
-  // }
+  #addNewTaskCard() {
+    const newTaskCard = new EditingTaskCard();
+    this.#taskCards.unshift(newTaskCard);
+    this.render();
+  }
 }

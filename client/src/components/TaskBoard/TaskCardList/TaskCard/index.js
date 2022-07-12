@@ -6,17 +6,17 @@ export default class TaskCard {
   constructor($parent, cardData) {
     this.$parent = $parent;
     this.cardData = cardData;
-    this.#makeDOM();
+    this.#makeTaskCard();
   }
 
   render() {
     this.#$taskCard.innerHTML = this.#getInnerTemplate();
+    this.$parent.append(this.#$taskCard);
   }
 
-  #makeDOM() {
+  #makeTaskCard() {
     this.#$taskCard = document.createElement('div');
     this.#$taskCard.className = 'taskCard';
-    this.$parent.append(this.#$taskCard);
   }
 
   #getInnerTemplate() {
