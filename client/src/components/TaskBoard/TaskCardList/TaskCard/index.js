@@ -1,9 +1,11 @@
 import './index.scss';
+import { makeEditingTaskCardElement } from '../EditingTaskCard';
 
 export const makeTaskCardElement = (cardData) => {
   const $taskCard = document.createElement('li');
   $taskCard.className = 'taskCard';
   $taskCard.innerHTML = getTaskCardInnerTemplate(cardData);
+  activateElement($taskCard, cardData);
   return $taskCard;
 };
 
@@ -23,4 +25,16 @@ const getTaskDetailTemplate = (details) => {
   return details
     .map((detail) => `<li class="taskCard__detail">${detail}</li>`)
     .join('');
+};
+
+const activateElement = ($taskCard, cardData) => {
+  $taskCard.addEventListener(
+    'dblclick',
+    convertToEditMode.bind(null, $taskCard, cardData)
+  );
+};
+
+const convertToEditMode = ($taskCard, cardData) => {
+  const $editingCardElement = makeEditingTaskCardElement(cardData);
+  $taskCard.parentNode.replaceChild($editingCardElement, $taskCard);
 };
