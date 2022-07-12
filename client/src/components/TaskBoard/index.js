@@ -7,21 +7,25 @@ export default class TaskBoard {
 
   constructor($parent) {
     this.$parent = $parent;
-    this.#makeDOM();
-    this.#render();
-    this.#mountTaskLists();
+    this.#makeTaskBoardElement();
+    this.#makeTaskLists();
   }
 
-  #makeDOM() {
+  #makeTaskBoardElement() {
     this.#$taskBoard = document.createElement('section');
     this.#$taskBoard.className = 'task-board';
   }
 
-  #render() {
+  render() {
+    this.#renderTaskLists();
     this.$parent.append(this.#$taskBoard);
   }
 
-  #mountTaskLists() {
+  #renderTaskLists() {
+    this.#taskCardLists.forEach((taskCardList) => taskCardList.render());
+  }
+
+  #makeTaskLists() {
     // Todo: 실제로는 data를 API 요청으로 받아와야 함
     this.#taskCardLists = dummyDatas.map(
       (cardListData) => new TaskCardList(this.#$taskBoard, cardListData)

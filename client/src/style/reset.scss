@@ -69,3 +69,8 @@ input {
 input:focus {
   outline: none;
 }
+
+textarea {
+  border: none;
+  resize: none;
+}
