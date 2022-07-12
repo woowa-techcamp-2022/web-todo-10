@@ -1,43 +1,40 @@
 import './index.scss';
+import { makeEditingTaskCardElement } from '../EditingTaskCard';
 
-export default class TaskCard {
-  #$taskCard;
+export const makeTaskCardElement = (cardData) => {
+  const $taskCard = document.createElement('li');
+  $taskCard.className = 'taskCard';
+  $taskCard.innerHTML = getTaskCardInnerTemplate(cardData);
+  activateElement($taskCard, cardData);
+  return $taskCard;
+};
 
-  constructor($parent, cardData) {
-    this.$parent = $parent;
-    this.cardData = cardData;
-    this.#makeTaskCardElement();
-  }
+const getTaskCardInnerTemplate = (cardData) => {
+  const { title, details, author } = cardData;
+  return `
+    <h3 class="taskCard__title">${title}</h3>
+    <ul class="taskCard__detail-container">
+      ${getTaskDetailTemplate(details)}
+    </ul>
+    <span class="taskCard__author">author by ${author}</span>
+    <button class="util__btn util__btn--delete taskCard__delete-btn"></button>
+  `;
+};
 
-  #makeTaskCardElement() {
-    this.#$taskCard = document.createElement('div');
-    this.#$taskCard.className = 'taskCard';
-  }
+const getTaskDetailTemplate = (details) => {
+  return details
+    .map((detail) => `<li class="taskCard__detail">${detail}</li>`)
+    .join('');
+};
 
-  render() {
-    this.#fillTaskCardElement();
-    this.$parent.append(this.#$taskCard);
-  }
+const activateElement = ($taskCard, cardData) => {
+  $taskCard.addEventListener(
+    'dblclick',
+    convertToEditMode.bind(null, $taskCard, cardData)
+  );
+};
 
-  #fillTaskCardElement() {
-    this.#$taskCard.innerHTML = this.#getInnerTemplate();
-  }
-
-  #getInnerTemplate() {
-    const { title, details, author } = this.cardData;
-    return `
-        <h3 class="taskCard__title">${title}</h3>
-        <ul class="taskCard__detail-container">
-          ${this.#getTaskDetailTemplate(details)}
-        </ul>
-        <span class="taskCard__author">author by ${author}</span>
-        <button class="util__btn util__btn--delete taskCard__delete-btn"></button>
-    `;
-  }
-
-  #getTaskDetailTemplate(details) {
-    return details
-      .map((detail) => `<li class="taskCard__detail">${detail}</li>`)
-      .join('');
-  }
-}
+const convertToEditMode = ($taskCard, cardData) => {
+  const $editingCardElement = makeEditingTaskCardElement(cardData);
+  $taskCard.parentNode.replaceChild($editingCardElement, $taskCard);
+};

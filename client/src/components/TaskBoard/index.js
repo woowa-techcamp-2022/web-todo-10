@@ -1,37 +1,15 @@
 import './index.scss';
-import TaskCardList from './TaskCardList';
+import { makeTaskCardColumnElement } from './TaskCardList';
 
-export default class TaskBoard {
-  #$taskBoard;
-  #taskCardLists;
+export const makeTaskBoardElement = () => {
+  const $taskBoard = document.createElement('section');
+  $taskBoard.className = 'task-board';
 
-  constructor($parent) {
-    this.$parent = $parent;
-    this.#makeTaskBoardElement();
-    this.#makeTaskLists();
-  }
-
-  #makeTaskBoardElement() {
-    this.#$taskBoard = document.createElement('section');
-    this.#$taskBoard.className = 'task-board';
-  }
-
-  render() {
-    this.#renderTaskLists();
-    this.$parent.append(this.#$taskBoard);
-  }
-
-  #renderTaskLists() {
-    this.#taskCardLists.forEach((taskCardList) => taskCardList.render());
-  }
-
-  #makeTaskLists() {
-    // Todo: 실제로는 data를 API 요청으로 받아와야 함
-    this.#taskCardLists = dummyDatas.map(
-      (cardListData) => new TaskCardList(this.#$taskBoard, cardListData)
-    );
-  }
-}
+  dummyDatas.forEach((taskListData) =>
+    $taskBoard.append(makeTaskCardColumnElement(taskListData))
+  );
+  return $taskBoard;
+};
 
 const dummyDatas = [
   {
