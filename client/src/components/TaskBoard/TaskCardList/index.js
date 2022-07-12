@@ -13,17 +13,28 @@ export default class TaskCardList {
     this.#makeTaskCards();
   }
 
-  //render
-  render() {
-    this.#$taskCardList.innerHTML = this.#getInnerTemplate();
-    this.#mountTaskCards();
-    this.#activate();
-  }
-
   #makeTaskCardListElement() {
     this.#$taskCardList = document.createElement('section');
     this.#$taskCardList.className = 'taskcard-list';
+  }
+
+  #makeTaskCards() {
+    // 데이터 포맷팅 (나중에 달라질 수 있음)
+    const cardDataArr = this.cardListData.tasks;
+    this.#taskCards = cardDataArr.map(
+      (cardData) => new TaskCard(this.#$taskCardList, cardData)
+    );
+  }
+
+  render() {
+    this.#fillTaskCardListElement();
     this.$parent.append(this.#$taskCardList);
+  }
+
+  #fillTaskCardListElement() {
+    this.#$taskCardList.innerHTML = this.#getInnerTemplate();
+    this.#renderTaskCards();
+    this.#activate();
   }
 
   #getInnerTemplate() {
@@ -41,16 +52,8 @@ export default class TaskCardList {
     `;
   }
 
-  #mountTaskCards() {
+  #renderTaskCards() {
     this.#taskCards.forEach((taskCard) => taskCard.render());
-  }
-
-  #makeTaskCards() {
-    // 데이터 포맷팅 (나중에 달라질 수 있음)
-    const cardDataArr = this.cardListData.tasks;
-    this.#taskCards = cardDataArr.map(
-      (cardData) => new TaskCard(this.#$taskCardList, cardData)
-    );
   }
 
   #activate() {
@@ -67,6 +70,6 @@ export default class TaskCardList {
   #addNewTaskCard() {
     const newTaskCard = new EditingTaskCard(this.#$taskCardList);
     this.#taskCards.unshift(newTaskCard);
-    this.render();
+    this.#fillTaskCardListElement();
   }
 }

@@ -9,14 +9,18 @@ export default class TaskCard {
     this.#makeTaskCardElement();
   }
 
-  render() {
-    this.$parent.append(this.#$taskCard);
-    this.#$taskCard.innerHTML = this.#getInnerTemplate();
-  }
-
   #makeTaskCardElement() {
     this.#$taskCard = document.createElement('div');
     this.#$taskCard.className = 'taskCard';
+  }
+
+  render() {
+    this.#fillTaskCardElement();
+    this.$parent.append(this.#$taskCard);
+  }
+
+  #fillTaskCardElement() {
+    this.#$taskCard.innerHTML = this.#getInnerTemplate();
   }
 
   #getInnerTemplate() {

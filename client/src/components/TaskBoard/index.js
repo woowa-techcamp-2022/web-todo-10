@@ -7,17 +7,22 @@ export default class TaskBoard {
 
   constructor($parent) {
     this.$parent = $parent;
-    this.#makeDOM();
+    this.#makeTaskBoardElement();
+    this.#makeTaskLists();
+  }
+
+  #makeTaskBoardElement() {
+    this.#$taskBoard = document.createElement('section');
+    this.#$taskBoard.className = 'task-board';
   }
 
   render() {
-    this.#mountTaskLists();
+    this.#renderTaskLists();
+    this.$parent.append(this.#$taskBoard);
   }
 
-  #makeDOM() {
-    this.#$taskBoard = document.createElement('section');
-    this.#$taskBoard.className = 'task-board';
-    this.$parent.append(this.#$taskBoard);
+  #renderTaskLists() {
+    this.#taskCardLists.forEach((taskCardList) => taskCardList.render());
   }
 
   #makeTaskLists() {
@@ -25,11 +30,6 @@ export default class TaskBoard {
     this.#taskCardLists = dummyDatas.map(
       (cardListData) => new TaskCardList(this.#$taskBoard, cardListData)
     );
-  }
-
-  #mountTaskLists() {
-    this.#makeTaskLists();
-    this.#taskCardLists.forEach((taskCardList) => taskCardList.render());
   }
 }
 

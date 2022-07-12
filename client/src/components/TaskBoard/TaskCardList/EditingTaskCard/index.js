@@ -7,14 +7,18 @@ export default class EditingTaskCard {
     this.#makeEditingTaskCardElement();
   }
 
-  render() {
-    this.#$editingTaskCard.innerHTML = this.#getInnerTemplate();
-    this.$parent.append(this.#$editingTaskCard);
-  }
-
   #makeEditingTaskCardElement() {
     this.#$editingTaskCard = document.createElement('div');
     this.#$editingTaskCard.className = 'taskCard editing';
+  }
+
+  render() {
+    this.#fillTaskCardElement();
+    this.$parent.append(this.#$editingTaskCard);
+  }
+
+  #fillTaskCardElement() {
+    this.#$editingTaskCard.innerHTML = this.#getInnerTemplate();
   }
 
   #getEditingTaskDetailTemplate(details) {
