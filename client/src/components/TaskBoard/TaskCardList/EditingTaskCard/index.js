@@ -1,10 +1,13 @@
 import './index.scss';
 
-export const makeEditingTaskCardElement = (originalCardData = {}) => {
+export const makeEditingTaskCardElement = (
+  originalCardData = {},
+  $taskCard
+) => {
   const $editingTaskCard = document.createElement('div');
   $editingTaskCard.className = 'taskCard editing';
   $editingTaskCard.innerHTML = getInnerTemplate(originalCardData);
-  activateElement($editingTaskCard);
+  activateElement($editingTaskCard, $taskCard);
   return $editingTaskCard;
 };
 
@@ -27,11 +30,14 @@ const getEditingTaskDetailTemplate = (details) => {
   return `<textarea placeholder="내용을 입력하세요" class="taskCard__detail--editing">${originalDetailContent}</textarea>`;
 };
 
-const activateElement = ($editingTaskCard) => {
+const activateElement = ($editingTaskCard, $taskCard) => {
   const $cancelBtn = $editingTaskCard.querySelector('.util__btn--cancel');
-  $cancelBtn.addEventListener('click', cancelEdit.bind(null, $editingTaskCard));
+  $cancelBtn.addEventListener(
+    'click',
+    cancelEdit.bind(null, $editingTaskCard, $taskCard)
+  );
 };
 
-const cancelEdit = ($editingTaskCard) => {
-  $editingTaskCard.remove();
+const cancelEdit = ($editingTaskCard, $taskCard) => {
+  $editingTaskCard.parentNode.replaceChild($taskCard, $editingTaskCard);
 };
