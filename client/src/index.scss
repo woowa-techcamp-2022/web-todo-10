@@ -6,15 +6,40 @@ body {
   padding: 0rem 5rem;
 }
 
-.util__btn {
-  width: 1.5rem;
-  height: 1.5rem;
-
-  &--add {
-    background: url(@imgs/plus.png) no-repeat center;
+.util {
+  &__btns {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
   }
 
-  &--delete {
-    background: url(@imgs/delete.png) no-repeat center;
+  &__btn {
+    width: 1.5rem;
+    height: 1.5rem;
+
+    &--big {
+      width: 8.375rem;
+      height: 2.5rem;
+      font-size: 0.875rem;
+      border-radius: 0.375rem;
+    }
+
+    &--add {
+      background: url(@imgs/plus.png) no-repeat center;
+    }
+
+    &--delete {
+      background: url(@imgs/delete.png) no-repeat center;
+    }
+
+    &--cancel {
+      background: $grey5;
+      color: $grey3;
+    }
+
+    &--confirm {
+      background: $blue;
+      color: $white;
+    }
   }
 }

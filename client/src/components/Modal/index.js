@@ -21,9 +21,9 @@ export default class Modal {
     return `
       <div class="modal">
         <h3 class="modal__message">${message}</h3>
-        <div class="modal__utils">
-          <button class="modal__btn modal__btn--cancel">취소</button>
-          <button class="modal__btn modal__btn--confirm">삭제</button>
+        <div class="util__btns">
+          <button class="util__btn--big util__btn--cancel">취소</button>
+          <button class="util__btn--big util__btn--confirm">삭제</button>
         </div>
       </div>
     `;

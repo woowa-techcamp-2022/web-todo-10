@@ -1,5 +1,6 @@
 import './index.scss';
 import TaskCard from './TaskCard';
+import EditingTaskCard from './EditingTaskCard';
 
 export default class TaskCardList {
   #$taskCardList;
@@ -12,16 +13,17 @@ export default class TaskCardList {
     this.#makeTaskCards();
   }
 
+  //render
   render() {
     this.#$taskCardList.innerHTML = this.#getInnerTemplate();
     this.#mountTaskCards();
     this.#activate();
-    this.$parent.append(this.#$taskCardList);
   }
 
   #makeTaskCardListElement() {
     this.#$taskCardList = document.createElement('section');
     this.#$taskCardList.className = 'taskcard-list';
+    this.$parent.append(this.#$taskCardList);
   }
 
   #getInnerTemplate() {
@@ -63,7 +65,7 @@ export default class TaskCardList {
   }
 
   #addNewTaskCard() {
-    const newTaskCard = new EditingTaskCard();
+    const newTaskCard = new EditingTaskCard(this.#$taskCardList);
     this.#taskCards.unshift(newTaskCard);
     this.render();
   }
