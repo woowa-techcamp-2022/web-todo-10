@@ -8,7 +8,7 @@ export const makeTaskCardElement = (cardData) => {
 };
 
 const getTaskCardInnerTemplate = (cardData) => {
-  const { title, details, author } = this.cardData;
+  const { title, details, author } = cardData;
   return `
     <h3 class="taskCard__title">${title}</h3>
     <ul class="taskCard__detail-container">
@@ -19,7 +19,7 @@ const getTaskCardInnerTemplate = (cardData) => {
   `;
 };
 
-const getTaskDetailTemplate = (detailsData) => {
+const getTaskDetailTemplate = (details) => {
   return details
     .map((detail) => `<li class="taskCard__detail">${detail}</li>`)
     .join('');

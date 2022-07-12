@@ -1,12 +1,12 @@
 import './index.scss';
-import { makeTaskCardListElement } from './TaskCardList';
+import { makeTaskCardColumnElement } from './TaskCardList';
 
 export const makeTaskBoardElement = () => {
   const $taskBoard = document.createElement('section');
   $taskBoard.className = 'task-board';
 
   dummyDatas.forEach((taskListData) =>
-    $taskBoard.append(makeTaskCardListElement(taskListData))
+    $taskBoard.append(makeTaskCardColumnElement(taskListData))
   );
   return $taskBoard;
 };

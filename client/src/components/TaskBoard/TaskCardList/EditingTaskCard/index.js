@@ -3,7 +3,7 @@ import './index.scss';
 export const makeEditingTaskCardElement = (originalCardData = {}) => {
   const $editingTaskCard = document.createElement('div');
   $editingTaskCard.className = 'taskCard editing';
-  $editingTaskCard.innerHTML = getInnerTemplate(cardData);
+  $editingTaskCard.innerHTML = getInnerTemplate(originalCardData);
   return $editingTaskCard;
 };
 

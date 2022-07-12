@@ -1,38 +1,50 @@
 import './index.scss';
 import { makeTaskCardElement } from './TaskCard';
+import { makeEditingTaskCardElement } from './EditingTaskCard';
 
-export const makeTaskCardListElement = (cardListData) => {
+export const makeTaskCardColumnElement = (cardListData) => {
   const { listName, tasks } = cardListData;
-  const $taskCardList = document.createElement('section');
-  $taskCardList.className = 'taskcard-list';
-  $taskCardList.innerHTML = getInnerTemplate(listName, tasks.length);
-  tasks.forEach((taskData) =>
-    $taskCardList.append(makeTaskCardElement(taskData))
+  const $taskCardColumn = document.createElement('section');
+  $taskCardColumn.className = 'taskcard-column';
+  $taskCardColumn.insertAdjacentHTML(
+    'afterbegin',
+    getHeaderTemplate(listName, tasks.length)
   );
-  activateElement();
-  return $taskCardList;
+  $taskCardColumn.append(makeTaskListElement(tasks));
+  activateElement($taskCardColumn);
+  return $taskCardColumn;
 };
 
-const getInnerTemplate = (listName, tasksCnt) => {
+const getHeaderTemplate = (listName, tasksCnt) => {
   return `
-      <div class="taskcard-list__header">
-      <div class="taskcard-list__info">
-        <h2 class="taskcard-list__title">${listName}</h2>
-        <div class="taskcard-list__count">${tasksCnt}</div>
+      <div class="taskcard-column__header">
+      <div class="taskcard-column__info">
+        <h2 class="taskcard-column__title">${listName}</h2>
+        <div class="taskcard-column__count">${tasksCnt}</div>
       </div>
       <div class="taskcard-list__utils">
-        <button class="taskcard-list__add-btn util__btn util__btn--add"></button>
-        <button class="taskcard-list__delete-btn util__btn util__btn--delete"></button>
+        <button class="taskcard-column__add-btn util__btn util__btn--add"></button>
+        <button class="taskcard-column__delete-btn util__btn util__btn--delete"></button>
       </div>
     `;
 };
 
-const activateElement = ($taskCardList) => {
-  const $addBtn = $taskCardList.querySelector('.taskcard-list__add-btn');
-  $addBtn.addEventListener('click', addNewTaskCard.bind(null, $taskCardList));
+const makeTaskListElement = (tasks) => {
+  const $taskCardList = document.createElement('ul');
+  $taskCardList.classList = 'taskcard-list';
+  tasks.forEach((taskData) =>
+    $taskCardList.append(makeTaskCardElement(taskData))
+  );
+  return $taskCardList;
 };
 
-const addNewTaskCard = ($taskCardList) => {
-  const $editingTaskCard = makeEditingTaskCard();
-  $taskCardList.insertAdjacentElement('afterbegin', $editingTaskCard);
+const activateElement = ($taskCardColumn) => {
+  const $addBtn = $taskCardColumn.querySelector('.taskcard-column__add-btn');
+  $addBtn.addEventListener('click', addNewTaskCard.bind(null, $taskCardColumn));
+};
+
+const addNewTaskCard = ($taskCardColumn) => {
+  const $editingTaskCard = makeEditingTaskCardElement();
+  const $taksCardList = $taskCardColumn.querySelector('.taskcard-list');
+  $taksCardList.insertAdjacentElement('afterbegin', $editingTaskCard);
 };
