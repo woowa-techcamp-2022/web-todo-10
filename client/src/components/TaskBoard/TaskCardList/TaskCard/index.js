@@ -35,6 +35,6 @@ const activateElement = ($taskCard, cardData) => {
 };
 
 const convertToEditMode = ($taskCard, cardData) => {
-  const $editingCardElement = makeEditingTaskCardElement(cardData);
+  const $editingCardElement = makeEditingTaskCardElement(cardData, $taskCard);
   $taskCard.parentNode.replaceChild($editingCardElement, $taskCard);
 };
