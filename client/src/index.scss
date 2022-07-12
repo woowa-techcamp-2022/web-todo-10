@@ -1,0 +1,20 @@
+@import '@style/reset.scss';
+@import '@style/variable.scss';
+
+body {
+  background-color: $background-color;
+  padding: 0rem 5rem;
+}
+
+.util__btn {
+  width: 1.5rem;
+  height: 1.5rem;
+
+  &--add {
+    background: url(@imgs/plus.png) no-repeat center;
+  }
+
+  &--delete {
+    background: url(@imgs/delete.png) no-repeat center;
+  }
+}

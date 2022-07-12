@@ -1,9 +1,11 @@
-const a = () => {
-  console.log('hi');
-};
+import './index.scss';
+import Header from '@/components/Header';
+import TaskBoard from '@/components/TaskBoard';
 
-class Test {
-  constructor(name) {
-    this.name = name;
-  }
+function main() {
+  const $app = document.querySelector('#app');
+  new Header($app);
+  new TaskBoard($app);
 }
+
+main();

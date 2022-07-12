@@ -1,0 +1,30 @@
+@import '@style/variable.scss';
+
+.taskCard {
+  position: relative;
+  padding: 1rem;
+  background-color: $white;
+  border-radius: 0.375rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &__title {
+    font-weight: $bold;
+  }
+
+  &__detail {
+    font-size: 0.875rem;
+  }
+
+  &__author {
+    font-size: 0.75rem;
+    color: $darkgrey;
+  }
+
+  &__delete-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  }
+}

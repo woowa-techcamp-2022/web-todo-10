@@ -1,4 +1,5 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: 'development',
@@ -21,12 +22,25 @@ module.exports = {
         loader: 'babel-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /\.png/,
+        type: 'asset/inline',
+      },
     ],
   },
   watch: true,
   devtool: 'eval',
   resolve: {
-    alias: { '@': path.resolve(__dirname, 'src') },
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+      '@style': path.resolve(__dirname, 'src', 'style'),
+      '@imgs': path.resolve(__dirname, 'src', 'imgs'),
+    },
     extensions: ['.js', '.scss'],
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: path.resolve(__dirname, 'src', 'index.html'),
+    }),
+  ],
 };
