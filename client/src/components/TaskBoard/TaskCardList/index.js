@@ -32,8 +32,8 @@ export default class TaskCardList {
         <div class="taskcard-list__count">${tasks.length}</div>
       </div>
       <div class="taskcard-list__utils">
-        <button class="taskcard-list__btn taskcard-list__btn--add"></button>
-        <button class="taskcard-list__btn taskcard-list__btn--delete"></button>
+        <button class="taskcard-list__add-btn util__btn util__btn--add"></button>
+        <button class="taskcard-list__delete-btn util__btn util__btn--delete"></button>
       </div>
     `;
   }
