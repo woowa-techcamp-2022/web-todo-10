@@ -5,7 +5,9 @@ import TaskBoard from '@/components/TaskBoard';
 function main() {
   const $app = document.querySelector('#app');
   new Header($app);
-  new TaskBoard($app);
+  const taskBoard = new TaskBoard($app);
+
+  taskBoard.render();
 }
 
 main();

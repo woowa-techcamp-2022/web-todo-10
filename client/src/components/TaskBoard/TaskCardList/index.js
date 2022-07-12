@@ -3,23 +3,23 @@ import TaskCard from './TaskCard';
 
 export default class TaskCardList {
   #$taskCardList;
-  #taksCards;
+  #taskCards;
 
   constructor($parent, cardListData) {
     this.$parent = $parent;
     this.cardListData = cardListData;
     this.#makeDOM();
-    this.#render();
+  }
+
+  render() {
+    this.#$taskCardList.innerHTML = this.#getInnerTemplate();
     this.#mountTaskCards();
+    //this.#activate();
   }
 
   #makeDOM() {
     this.#$taskCardList = document.createElement('section');
     this.#$taskCardList.className = 'taskcard-list';
-  }
-
-  #render() {
-    this.#$taskCardList.innerHTML = this.#getInnerTemplate();
     this.$parent.append(this.#$taskCardList);
   }
 
@@ -39,9 +39,32 @@ export default class TaskCardList {
   }
 
   #mountTaskCards() {
+    this.#makeTaskCards();
+    this.#taskCards.forEach((taskCard) => taskCard.render());
+  }
+
+  #makeTaskCards() {
+    // 데이터 포맷팅 (나중에 달라질 수 있음)
     const cardDataArr = this.cardListData.tasks;
-    this.#taksCards = cardDataArr.map(
+    this.#taskCards = cardDataArr.map(
       (cardData) => new TaskCard(this.#$taskCardList, cardData)
     );
   }
+
+  // #activate() {
+  //   this.#activateAddBtn();
+  // }
+
+  // #activateAddBtn() {
+  //   const $addBtn = this.#$taskCardList.querySelector(
+  //     '.taskcard-list__add-btn'
+  //   );
+  //   $addBtn.addEventListener('click', () => this.#addNewTaskCard());
+  // }
+
+  // #addNewTaskCard() {
+  //   const newTaskCard = new Ed();
+  //   this.#taskCards.unshift(newTaskCard);
+  //   this.#taskCards.forEach((taskCard) => taskCard.render());
+  // }
 }
