@@ -33,11 +33,27 @@ const getEditingTaskDetailTemplate = (details) => {
 
 const activateElement = ($editingTaskCard, $taskCard) => {
   const $cancelBtn = $editingTaskCard.querySelector('.util__btn--cancel');
+  const $submitBtn = $editingTaskCard.querySelector('.util__btn--confirm');
+  const $titleInput = $editingTaskCard.querySelector('.taskCard__title');
+  const $detailsTextArea = $editingTaskCard.querySelector(
+    '.taskCard__detail--editing'
+  );
+
   $cancelBtn.addEventListener(
     'click',
     cancelEdit.bind(null, $editingTaskCard, $taskCard)
   );
   $editingTaskCard.addEventListener('submit', confirmEdit);
+  $editingTaskCard.addEventListener(
+    'input',
+    checkAllInputValidity.bind(null, $titleInput, $detailsTextArea, $submitBtn)
+  );
+};
+
+const checkAllInputValidity = ($titleInput, $detailsTextArea, $submitBtn) => {
+  const isAllValid =
+    $titleInput.value.trim().length && $detailsTextArea.value.trim().length;
+  $submitBtn.disabled = !isAllValid;
 };
 
 const cancelEdit = ($editingTaskCard, $taskCard) => {
@@ -51,11 +67,6 @@ const confirmEdit = async (event) => {
   const listId = event.target.closest('.taskcard-column').dataset.id;
   const newTitle = title.value;
   const newDetails = details.value.split('\n');
-  const updatedListData = await request.updateCard(
-    cardId,
-    newTitle,
-    newDetails,
-    listId
-  );
+  await request.updateCard(cardId, newTitle, newDetails, listId);
   event.target.dispatchEvent(new Event('changeCard', { bubbles: true }));
 };
