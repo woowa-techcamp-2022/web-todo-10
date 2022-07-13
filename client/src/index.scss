@@ -46,5 +46,9 @@ body {
         background: $lightBlue;
       }
     }
+
+    &--delete-warn {
+      background-image: url(@imgs/delete-warn.png);
+    }
   }
 }

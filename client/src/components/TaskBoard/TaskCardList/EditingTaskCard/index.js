@@ -3,14 +3,13 @@ import request from '@util/fetchUtil.js';
 
 export const makeEditingTaskCardElement = (
   originalCardData = {},
-  $taskCard
+  $originalTaskCard = null
 ) => {
   const $editingTaskCard = document.createElement('form');
   $editingTaskCard.className = 'taskCard editing';
   $editingTaskCard.dataset.id = originalCardData?.id;
   $editingTaskCard.innerHTML = getInnerTemplate(originalCardData);
-
-  activateElement($editingTaskCard, $taskCard);
+  activateElement($editingTaskCard, $originalTaskCard);
   return $editingTaskCard;
 };
 
@@ -31,7 +30,7 @@ const getEditingTaskDetailTemplate = (details) => {
   return `<textarea name='details' placeholder="내용을 입력하세요" class="taskCard__detail--editing">${originalDetailContent}</textarea>`;
 };
 
-const activateElement = ($editingTaskCard, $taskCard) => {
+const activateElement = ($editingTaskCard, $originalTaskCard) => {
   const $cancelBtn = $editingTaskCard.querySelector('.util__btn--cancel');
   const $submitBtn = $editingTaskCard.querySelector('.util__btn--confirm');
   const $titleInput = $editingTaskCard.querySelector('.taskCard__title');
@@ -41,7 +40,7 @@ const activateElement = ($editingTaskCard, $taskCard) => {
 
   $cancelBtn.addEventListener(
     'click',
-    cancelEdit.bind(null, $editingTaskCard, $taskCard)
+    cancelEdit.bind(null, $editingTaskCard, $originalTaskCard)
   );
   $editingTaskCard.addEventListener('submit', confirmEdit);
   $editingTaskCard.addEventListener(
@@ -56,8 +55,13 @@ const checkAllInputValidity = ($titleInput, $detailsTextArea, $submitBtn) => {
   $submitBtn.disabled = !isAllValid;
 };
 
-const cancelEdit = ($editingTaskCard, $taskCard) => {
-  $editingTaskCard.parentNode.replaceChild($taskCard, $editingTaskCard);
+const cancelEdit = ($editingTaskCard, $originalTaskCard) => {
+  if ($originalTaskCard)
+    $editingTaskCard.parentNode.replaceChild(
+      $originalTaskCard,
+      $editingTaskCard
+    );
+  else $editingTaskCard.remove();
 };
 
 const confirmEdit = async (event) => {
