@@ -2,7 +2,7 @@ import './index.scss';
 
 export const makeEditingTaskCardElement = (
   originalCardData = {},
-  $taskCard
+  $taskCard = null
 ) => {
   const $editingTaskCard = document.createElement('div');
   $editingTaskCard.className = 'taskCard editing';
@@ -39,5 +39,7 @@ const activateElement = ($editingTaskCard, $taskCard) => {
 };
 
 const cancelEdit = ($editingTaskCard, $taskCard) => {
-  $editingTaskCard.parentNode.replaceChild($taskCard, $editingTaskCard);
+  if ($taskCard)
+    $editingTaskCard.parentNode.replaceChild($taskCard, $editingTaskCard);
+  else $editingTaskCard.remove();
 };
