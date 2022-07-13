@@ -1,5 +1,6 @@
 import './index.scss';
 import request from '@util/fetchUtil.js';
+import { MAX_TASK_DETAIL_LENGTH } from '../../../../constant';
 
 export const makeEditingTaskCardElement = (
   type,
@@ -30,7 +31,7 @@ const getInnerTemplate = (originalCardData = {}) => {
 
 const getEditingTaskDetailTemplate = (details) => {
   const originalDetailContent = details ? details.join('\n') : '';
-  return `<textarea name='details' placeholder="내용을 입력하세요" class="taskCard__detail--editing">${originalDetailContent}</textarea>`;
+  return `<textarea name='details' placeholder="내용을 입력하세요" class="taskCard__detail--editing" maxlength=${MAX_TASK_DETAIL_LENGTH}>${originalDetailContent}</textarea>`;
 };
 
 const activateElement = ($editingTaskCard, $originalTaskCard, type) => {

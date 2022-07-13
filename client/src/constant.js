@@ -1,0 +1,1 @@
+export const MAX_TASK_DETAIL_LENGTH = 500;
