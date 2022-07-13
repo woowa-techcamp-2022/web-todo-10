@@ -28,9 +28,9 @@ const request = {
     return changedList;
   },
 
-  async addCard(listId, title, details) {
+  async addCard(columnId, title, details) {
     const requestMessage = makeRequestMessage('POST', {
-      listId,
+      columnId,
       title,
       details,
     });
