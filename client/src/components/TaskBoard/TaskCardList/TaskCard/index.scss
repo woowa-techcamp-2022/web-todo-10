@@ -1,6 +1,6 @@
 @import '@style/variable.scss';
 
-.taskCard {
+.taskcard {
   position: relative;
   padding: 1rem;
   background-color: $white;
@@ -32,4 +32,13 @@
     background-color: rgba($red, 0.5);
     border: 1px red solid;
   }
+}
+
+.shadow {
+  opacity: 0.2;
+  box-shadow: 0 0 0 1px $blue inset;
+}
+
+.following {
+  position: fixed;
 }
