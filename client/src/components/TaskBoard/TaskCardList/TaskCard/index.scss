@@ -5,9 +5,7 @@
   padding: 1rem;
   background-color: $white;
   border-radius: 0.375rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  width: 19.25rem;
 
   &__title {
     font-weight: $bold;
@@ -41,4 +39,5 @@
 
 .following {
   position: fixed;
+  z-index: 100;
 }

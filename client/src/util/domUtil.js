@@ -1,20 +1,19 @@
-export const insertNodeBefore = (targetNode, referenceNode) => {
-  referenceNode.parentNode.insertBefore(targetNode, referenceNode);
+export const insertElementBefore = (targetElement, referenceElement) => {
+  referenceElement.parentElement.insertBefore(targetElement, referenceElement);
 };
 
-export const insertNodeAfter = (targetNode, referenceNode) => {
-  referenceNode.parentNode.insertBefore(targetNode, referenceNode.nextSibling);
-};
-
-export const removeNodeself = (node) => {
-  node.parentNode.removeChild(node);
+export const insertElementAfter = (targetElement, referenceElement) => {
+  referenceElement.parentNode.insertBefore(
+    targetElement,
+    referenceElement.nextSibling
+  );
 };
 
 export const hasClassName = (element, className) => {
   return element.classList.contains(className);
 };
 
-export const getNodeIndex = (node) => {
+export const getElementIndex = (node) => {
   let idx = 0;
   while (node.previousSibling) {
     idx++;
