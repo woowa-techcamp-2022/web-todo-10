@@ -42,8 +42,8 @@ body {
       color: $white;
     }
 
-    &--delete-warning {
-      background: url(@imgs/delete-warn.png) no-repeat center;
+    &--delete-warn {
+      background-image: url(@imgs/delete-warn.png);
     }
   }
 }

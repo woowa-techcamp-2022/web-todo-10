@@ -28,8 +28,8 @@
     right: 1rem;
   }
 
-  &__delete-warning {
-    background-color: rgba(red, 0.5);
+  &__delete-warn {
+    background-color: rgba($red, 0.5);
     border: 1px red solid;
   }
 }

@@ -50,6 +50,6 @@ const convertToEditMode = ($taskCard, cardData) => {
 };
 
 const showDeleteWarning = ($taskCard, $deleteBtn, e) => {
-  $taskCard.classList.toggle('taskCard__delete-warning');
-  $deleteBtn.classList.toggle('util__btn--delete-warning');
+  $taskCard.classList.toggle('taskCard__delete-warn');
+  $deleteBtn.classList.toggle('util__btn--delete-warn');
 };
