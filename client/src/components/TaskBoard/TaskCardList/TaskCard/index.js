@@ -8,7 +8,8 @@ import {
   getElementIndex,
 } from '@util/domUtil.js';
 import Point from '@util/Point';
-import { getElementPos } from '../../../../util/domUtil';
+import { getElementPos } from '@util/domUtil';
+import request from '@util/fetchUtil';
 
 export const makeTaskCardElement = (cardData) => {
   const $taskCard = document.createElement('li');
@@ -60,7 +61,7 @@ const activateElement = ($taskCard, cardData) => {
 
   $taskCard.addEventListener(
     'mousedown',
-    handleMouseDownEvent.bind(null, $taskCard, cardData.columnId)
+    handleMouseDownEvent.bind(null, $taskCard)
   );
 };
 
@@ -73,7 +74,7 @@ const convertToEditMode = ($taskCard, cardData) => {
   $taskCard.parentNode.replaceChild($editingCardElement, $taskCard);
 };
 
-const showDeleteWarning = ($taskCard, $deleteBtn, e) => {
+const showDeleteWarning = ($taskCard, $deleteBtn) => {
   $taskCard.classList.toggle('taskcard__delete-warn');
   $deleteBtn.classList.toggle('util__btn--delete-warn');
 };
@@ -82,28 +83,14 @@ const handleDeleteBtnClick = (cardId, { target }) => {
   target.parentNode.append(makeAlertModalElement(cardId));
 };
 
-////////////////
-////////////////
-////////////////
-////////////////
-////////////////
-////////////////
-////////////////
-////////////////
-////////////////
-////////////////
-////////////////
-////////////////
-
-const handleMouseDownEvent = ($taskCard, columnId, e) => {
-  if (e.detail !== 1) return;
-  startDragNDrop($taskCard, columnId, e);
+const handleMouseDownEvent = ($taskCard, event) => {
+  if (event.detail !== 1) return;
+  startDragNDrop($taskCard, event);
 };
 
-const startDragNDrop = ($taskCard, columnId, event) => {
-  const originalColumnID = columnId;
+const startDragNDrop = ($taskCard, event) => {
+  const $originalColumn = $taskCard.closest('.taskcard-column');
   const originalCardIdx = getElementIndex($taskCard);
-
   const originalCardPos = getOriginalCardPos($taskCard);
   const pointerPosOnCard = getPointerPosOnCard(event, originalCardPos);
 
@@ -116,26 +103,19 @@ const startDragNDrop = ($taskCard, columnId, event) => {
     $shadowCard,
     pointerPosOnCard
   );
-  const mouseUpHandler = getMouseUpHandler(
+
+  const dragEndHandler = handleDragEnd.bind(
+    null,
     dragHandler,
     $shadowCard,
     $followingCard,
-    originalColumnID,
+    $originalColumn,
     originalCardIdx
   );
 
   document.body.addEventListener('mousemove', dragHandler);
-  document.body.addEventListener('mouseup', mouseUpHandler, { once: true });
-  // document.body.addEventListener(
-  //   'dragend',
-  //   handleDragEventEnd.bind(null, mouseMoveHandler),
-  //   { once: true }
-  // );
+  document.body.addEventListener('mouseup', dragEndHandler, { once: true });
 };
-
-// const handleDragEventEnd = (mouseMoveHandler) => {
-//   document.body.removeEventListener('mousemove', mouseMoveHandler);
-// };
 
 const getOriginalCardPos = ($taskCard) => {
   const [originalCardX, originalCardY] = getElementPos($taskCard);
@@ -156,10 +136,10 @@ const makeShadowCardElement = ($card) => {
 };
 
 const makeFollowingCardElement = ($card, originalCardPos) => {
-  const followingCardNode = $card;
-  followingCardNode.classList.add('following');
-  moveFollowingCard(followingCardNode, originalCardPos);
-  return followingCardNode;
+  const $followingCard = $card;
+  $followingCard.classList.add('following');
+  moveFollowingCard($followingCard, originalCardPos);
+  return $followingCard;
 };
 
 const moveFollowingCard = ($card, pos) => {
@@ -177,24 +157,6 @@ const handleDragPointer = (
   handleFollowingCard($followingCard, pointerPosOnCard, currPointerPos);
   handleCardShadow($followingCard, $shadowCard, currPointerPos);
 };
-
-const getMouseUpHandler =
-  (
-    mouseMoveHandler,
-    shadowCardNode,
-    followingCardNode,
-    originalParentColumnID,
-    originalCardIdx
-  ) =>
-  () => {
-    endDragDropEvent(
-      mouseMoveHandler,
-      shadowCardNode,
-      followingCardNode,
-      originalParentColumnID,
-      originalCardIdx
-    );
-  };
 
 const handleFollowingCard = (
   $followingCard,
@@ -261,58 +223,49 @@ const inspectNearElementType = (underPointerElement) => {
   }
 };
 
-const endDragDropEvent = (
-  mouseMoveHandler,
-  shadowCardNode,
-  followingCardNode,
-  originalParentColumnID,
+const handleDragEnd = (
+  dragHandler,
+  $shadowCard,
+  $followingCard,
+  $originalColumn,
   originalCardIdx
 ) => {
-  document.body.removeEventListener('mousemove', mouseMoveHandler);
-  putFollowingCardOnShadow(followingCardNode, shadowCardNode);
-  disconnectFollowingCard(followingCardNode);
-  shadowCardNode.remove();
-  updateResult(followingCardNode, originalParentColumnID, originalCardIdx);
+  document.body.removeEventListener('mousemove', dragHandler);
+  putFollowingCardOnShadow($followingCard, $shadowCard);
+  disconnectFollowingCard($followingCard);
+  $shadowCard.remove();
+  updateResult($followingCard, $originalColumn, originalCardIdx);
 };
 
-const putFollowingCardOnShadow = (followingCardNode, shadowCardNode) => {
-  insertElementBefore(followingCardNode, shadowCardNode);
+const putFollowingCardOnShadow = ($followingCard, $shadowCard) => {
+  insertElementBefore($followingCard, $shadowCard);
 };
 
-const disconnectFollowingCard = (followingCardNode) => {
-  followingCardNode.classList.remove('following');
-  followingCardNode.style.left = 0;
-  followingCardNode.style.top = 0;
+const disconnectFollowingCard = ($followingCard) => {
+  $followingCard.classList.remove('following');
+  $followingCard.style.left = 0;
+  $followingCard.style.top = 0;
 };
 
-const updateResult = (
-  followingCardNode,
-  originalParentColumnID,
+const updateResult = async (
+  $followingCard,
+  $originalColumn,
   originalCardIdx
 ) => {
-  const newParentColumnID = Number(
-    followingCardNode.closest('.taskcard-column').dataset.id
+  const originalColumnId = $originalColumn.dataset.id;
+  const cardId = $followingCard.dataset.id;
+  const newColumnId = $followingCard.closest('.taskcard-column').dataset.id;
+  const movedIdx = getElementIndex($followingCard);
+  const isCardMoved =
+    originalColumnId !== newColumnId || originalCardIdx !== movedIdx;
+  if (!isCardMoved) return;
+  await request.moveCard(
+    cardId,
+    originalColumnId,
+    newColumnId,
+    originalCardIdx,
+    movedIdx
   );
-  const cardID = followingCardNode.dataset.id;
-  const movedIdx = getElementIndex(followingCardNode);
-  if (
-    isCardPositionChanged(
-      originalParentColumnID,
-      newParentColumnID,
-      originalCardIdx,
-      movedIdx
-    )
-  )
-    console.log('changed!');
-};
-
-const isCardPositionChanged = (
-  originalParentColumnID,
-  newParentColumnID,
-  originalCardIdx,
-  movedIdx
-) => {
-  return (
-    originalParentColumnID !== newParentColumnID || originalCardIdx !== movedIdx
-  );
+  $followingCard.dispatchEvent(new Event('changeCard', { bubbles: true }));
+  $originalColumn.dispatchEvent(new Event('changeCard', { bubbles: true }));
 };
