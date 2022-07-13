@@ -40,6 +40,11 @@ body {
     &--confirm {
       background: $blue;
       color: $white;
+
+      &:disabled {
+        color: $white 40%;
+        background: $lightBlue;
+      }
     }
 
     &--delete-warn {
