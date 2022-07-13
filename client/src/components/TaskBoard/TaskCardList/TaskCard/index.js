@@ -100,38 +100,52 @@ const handleMouseDownEvent = ($taskCard, columnId, e) => {
   startDragNDrop($taskCard, columnId, e);
 };
 
-const startDragNDrop = ($taskCard, columnId, e) => {
-  const originalCardPoint = getOriginalCardPoint($taskCard);
-  const originalCardIdx = getElementIndex($taskCard);
+const startDragNDrop = ($taskCard, columnId, event) => {
   const originalColumnID = columnId;
+  const originalCardIdx = getElementIndex($taskCard);
+
+  const originalCardPos = getOriginalCardPos($taskCard);
+  const pointerPosOnCard = getPointerPosOnCard(event, originalCardPos);
 
   const $shadowCard = makeShadowCardElement($taskCard);
-  const $followingCard = makeFollowingCardElement($taskCard, originalCardPoint);
+  const $followingCard = makeFollowingCardElement($taskCard, originalCardPos);
 
-  //카드 내 mouse위치
-  const pointerInCardX = e.clientX - originalCardLeft;
-  const pointerInCardY = e.clientY - originalCardTop;
-
-  const mouseMoveHandler = getMouseMoveHandler(
-    pointerInCardX,
-    pointerInCardY,
+  const dragHandler = handleDragPointer.bind(
+    null,
+    $followingCard,
     $shadowCard,
-    $followingCard
+    pointerPosOnCard
   );
   const mouseUpHandler = getMouseUpHandler(
-    mouseMoveHandler,
+    dragHandler,
     $shadowCard,
     $followingCard,
     originalColumnID,
     originalCardIdx
   );
-  document.body.addEventListener('mousemove', mouseMoveHandler);
+
+  document.body.addEventListener('mousemove', dragHandler);
   document.body.addEventListener('mouseup', mouseUpHandler, { once: true });
+  // document.body.addEventListener(
+  //   'dragend',
+  //   handleDragEventEnd.bind(null, mouseMoveHandler),
+  //   { once: true }
+  // );
 };
 
-const getOriginalCardPoint = ($taskCard) => {
+// const handleDragEventEnd = (mouseMoveHandler) => {
+//   document.body.removeEventListener('mousemove', mouseMoveHandler);
+// };
+
+const getOriginalCardPos = ($taskCard) => {
   const [originalCardX, originalCardY] = getElementPos($taskCard);
   return new Point(originalCardX, originalCardY);
+};
+
+const getPointerPosOnCard = (event, cardPos) => {
+  const pointerInCardX = event.clientX - cardPos.x;
+  const pointerInCardY = event.clientY - cardPos.y;
+  return new Point(pointerInCardX, pointerInCardY);
 };
 
 const makeShadowCardElement = ($card) => {
@@ -141,23 +155,28 @@ const makeShadowCardElement = ($card) => {
   return $shadowCard;
 };
 
-const makeFollowingCardElement = ($card, originalCardTop, originalCardLeft) => {
+const makeFollowingCardElement = ($card, originalCardPos) => {
   const followingCardNode = $card;
   followingCardNode.classList.add('following');
-  moveFollowingCard($card, originalCardLeft, originalCardTop);
+  moveFollowingCard(followingCardNode, originalCardPos);
   return followingCardNode;
 };
 
-const moveFollowingCard = ($card, posX, posY) => {
-  $card.style.left = posX + 'px';
-  $card.style.top = posY + 'px';
+const moveFollowingCard = ($card, pos) => {
+  $card.style.left = pos.x + 'px';
+  $card.style.top = pos.y + 'px';
 };
 
-const getMouseMoveHandler =
-  (pointerInCardX, pointerInCardY, $shadowCard, $followingCard) => (event) => {
-    handleFollowingCard(pointerInCardX, pointerInCardY, $followingCard, event);
-    handleCardShadow($shadowCard, $followingCard, event);
-  };
+const handleDragPointer = (
+  $followingCard,
+  $shadowCard,
+  pointerPosOnCard,
+  event
+) => {
+  const currPointerPos = new Point(event.clientX, event.clientY);
+  handleFollowingCard($followingCard, pointerPosOnCard, currPointerPos);
+  handleCardShadow($followingCard, $shadowCard, currPointerPos);
+};
 
 const getMouseUpHandler =
   (
@@ -177,79 +196,68 @@ const getMouseUpHandler =
     );
   };
 
-const handleFollowingCard = (shiftX, shiftY, $followingCard, event) => {
-  const [posX, posY] = getCardPosition(shiftX, shiftY, event);
-  moveFollowingCard($followingCard, posX, posY);
-};
-
-const getCardPosition = (shiftX, shiftY, event) => {
-  const x = event.clientX - shiftX;
-  const y = event.clientY - shiftY;
-  return [x, y];
-};
-
-const handleCardShadow = ($shadowCard, $followingCard, event) => {
-  const underMouseElement = getUnderMouseElement(
-    $followingCard,
-    event.clientX,
-    event.clientY
-  );
-  const underMouseElementClass = inspectElementClass(underMouseElement);
-  moveCardShadow(underMouseElementClass, underMouseElement, $shadowCard, event);
-};
-
-const moveCardShadow = (
-  underMouseElementClass,
-  underMouseElement,
-  shadowCardNode,
-  event
+const handleFollowingCard = (
+  $followingCard,
+  pointerPosOnCard,
+  currPointerPos
 ) => {
-  switch (underMouseElementClass) {
-    case 'taskcard':
-      moveToAroundCard(underMouseElement, shadowCardNode, event);
+  const cardPos = new Point(...currPointerPos.diff(pointerPosOnCard));
+  moveFollowingCard($followingCard, cardPos);
+};
+
+const handleCardShadow = ($followingCard, $shadowCard, currPointerPos) => {
+  const nearElement = getNearElement($followingCard, currPointerPos);
+  moveCardShadow(nearElement, $shadowCard, currPointerPos);
+};
+
+const moveCardShadow = (nearElement, $shadowCard, currPointerPos) => {
+  const nearElementType = inspectNearElementType(nearElement);
+  switch (nearElementType) {
+    case 'TASKCARD':
+      moveToAroundCard(nearElement, $shadowCard, currPointerPos);
       return;
-    case 'card-content':
-      const parentCardElement = underMouseElement.closest('.taskcard');
-      moveToAroundCard(parentCardElement, shadowCardNode, event);
+    case 'TASKCARD_CONTENT':
+      const parentCardElement = nearElement.closest('.taskcard');
+      moveToAroundCard(parentCardElement, $shadowCard, currPointerPos);
       return;
-    case 'taskcard-list':
-      moveToColumn(underMouseElement, shadowCardNode);
+    case 'TASKCARD_WRAPPER':
+      moveToColumn(nearElement, $shadowCard);
       return;
   }
 };
 
-const moveToAroundCard = (underMouseCardElement, cardNode, event) => {
-  const rect = underMouseCardElement.getBoundingClientRect();
-  if (event.clientY < (rect.top + rect.bottom) / 2) {
-    insertElementBefore(cardNode, underMouseCardElement);
+const moveToAroundCard = (cardElement, $shadowCard, currPointerPos) => {
+  const { top, bottom } = cardElement.getBoundingClientRect();
+  if (currPointerPos.y < (top + bottom) / 2) {
+    insertElementBefore($shadowCard, cardElement);
   } else {
-    insertElementAfter(cardNode, underMouseCardElement);
+    insertElementAfter($shadowCard, cardElement);
   }
 };
 
-const moveToColumn = (underMouseColumnElement, cardNode) => {
-  underMouseColumnElement.append(cardNode);
+const moveToColumn = (columnElement, $shadowCard) => {
+  columnElement.append($shadowCard);
 };
 
-const getUnderMouseElement = (followingCardNode, x, y) => {
-  followingCardNode.hidden = true;
-  const underMouseElement = document.elementFromPoint(x, y);
-  followingCardNode.hidden = false;
-  return underMouseElement;
+const getNearElement = ($followingCard, pointerPos) => {
+  $followingCard.hidden = true;
+  const nearElement = document.elementFromPoint(pointerPos.x, pointerPos.y);
+  $followingCard.hidden = false;
+  return nearElement;
 };
 
-const inspectElementClass = (underMouseElement) => {
+const inspectNearElementType = (underPointerElement) => {
   if (
-    hasClassName(underMouseElement, 'taskcard') &&
-    !hasClassName(underMouseElement, 'shadow')
+    hasClassName(underPointerElement, 'taskcard') &&
+    !hasClassName(underPointerElement, 'shadow')
   ) {
-    return 'taskcard';
-  } else if (hasClassName(underMouseElement, 'taskcard-list')) {
-    return 'taskcard-list';
-  } else if (underMouseElement.closest('.taskcard')) {
-    return 'card-content';
+    return 'TASKCARD';
+  } else if (hasClassName(underPointerElement, 'taskcard-list')) {
+    return 'TASKCARD_WRAPPER';
+  } else if (underPointerElement.closest('.taskcard')) {
+    return 'TASKCARD_CONTENT';
   } else {
-    return 'others';
+    return 'OTHERS';
   }
 };
 
