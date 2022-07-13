@@ -76,7 +76,7 @@ const deleteCardData = (req, res, ctx) => {
   const columnId = taskTable[cardId].columnId;
   delete taskTable[cardId];
   taskColumnTable[columnId].taskIds = taskColumnTable[columnId].taskIds.filter(
-    (id) => id !== cardId
+    (id) => id !== +cardId
   );
   return res(
     ctx.status(200),
