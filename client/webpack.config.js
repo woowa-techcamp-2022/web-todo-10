@@ -35,6 +35,7 @@ module.exports = {
       '@': path.resolve(__dirname, 'src'),
       '@style': path.resolve(__dirname, 'src', 'style'),
       '@imgs': path.resolve(__dirname, 'src', 'imgs'),
+      '@util': path.resolve(__dirname, 'src', 'util'),
     },
     extensions: ['.js', '.scss'],
   },

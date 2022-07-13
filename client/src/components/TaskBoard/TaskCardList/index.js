@@ -1,11 +1,13 @@
 import './index.scss';
 import { makeTaskCardElement } from './TaskCard';
 import { makeEditingTaskCardElement } from './EditingTaskCard';
+import request from '@util/fetchUtil';
 
 export const makeTaskCardColumnElement = (cardListData) => {
-  const { listName, tasks } = cardListData;
+  const { listName, tasks, id } = cardListData;
   const $taskCardColumn = document.createElement('section');
   $taskCardColumn.className = 'taskcard-column';
+  $taskCardColumn.dataset.id = id;
   $taskCardColumn.insertAdjacentHTML(
     'afterbegin',
     getHeaderTemplate(listName, tasks.length)
@@ -41,10 +43,15 @@ const makeTaskListElement = (tasks) => {
 const activateElement = ($taskCardColumn) => {
   const $addBtn = $taskCardColumn.querySelector('.taskcard-column__add-btn');
   $addBtn.addEventListener('click', addNewTaskCard.bind(null, $taskCardColumn));
+  $taskCardColumn.addEventListener('changeCard', updateList);
 };
 
 const addNewTaskCard = ($taskCardColumn) => {
   const $editingTaskCard = makeEditingTaskCardElement();
   const $taksCardList = $taskCardColumn.querySelector('.taskcard-list');
   $taksCardList.insertAdjacentElement('afterbegin', $editingTaskCard);
+};
+
+const updateList = () => {
+  const updatedList = $taskCardColumn.parentNode.replaceChild();
 };

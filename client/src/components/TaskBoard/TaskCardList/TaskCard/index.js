@@ -4,6 +4,7 @@ import { makeEditingTaskCardElement } from '../EditingTaskCard';
 export const makeTaskCardElement = (cardData) => {
   const $taskCard = document.createElement('li');
   $taskCard.className = 'taskCard';
+  $taskCard.dataset.id = cardData.id;
   $taskCard.innerHTML = getTaskCardInnerTemplate(cardData);
   activateElement($taskCard, cardData);
   return $taskCard;

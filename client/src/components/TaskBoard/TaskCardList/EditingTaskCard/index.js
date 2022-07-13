@@ -1,4 +1,5 @@
 import './index.scss';
+import request from '@util/fetchUtil.js';
 
 export const makeEditingTaskCardElement = (
   originalCardData = {},
@@ -6,7 +7,9 @@ export const makeEditingTaskCardElement = (
 ) => {
   const $editingTaskCard = document.createElement('form');
   $editingTaskCard.className = 'taskCard editing';
+  $editingTaskCard.dataset.id = originalCardData?.id;
   $editingTaskCard.innerHTML = getInnerTemplate(originalCardData);
+
   activateElement($editingTaskCard, $taskCard);
   return $editingTaskCard;
 };
@@ -41,7 +44,18 @@ const cancelEdit = ($editingTaskCard, $taskCard) => {
   $editingTaskCard.parentNode.replaceChild($taskCard, $editingTaskCard);
 };
 
-const confirmEdit = (event) => {
+const confirmEdit = async (event) => {
   event.preventDefault();
   const { title, details } = event.target.elements;
+  const cardId = event.target.dataset.id;
+  const listId = event.target.closest('.taskcard-column').dataset.id;
+  const newTitle = title.value;
+  const newDetails = details.value.split('\n');
+  const updatedListData = await request.updateCard(
+    cardId,
+    newTitle,
+    newDetails,
+    listId
+  );
+  event.target.dispatchEvent(new Event('changeCard', { bubbles: true }));
 };

@@ -4,6 +4,11 @@ const request = {
     return allListData;
   },
 
+  async getList() {
+    const listData = await (await fetch('/api/tasklist/:id')).json();
+    return listData;
+  },
+
   async deleteCard(cardId, listId) {
     const requestMessage = makeRequestMessage('DELETE', { listId });
     const changedList = await (
@@ -13,6 +18,7 @@ const request = {
   },
 
   async updateCard(cardId, title, details, listId) {
+    console.log(cardId, title, details, listId);
     const requestMessage = makeRequestMessage('PATCH', {
       title,
       details,
