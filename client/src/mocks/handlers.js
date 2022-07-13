@@ -1,8 +1,18 @@
 import { rest } from 'msw';
 import taskListDatas from './mockData';
+import { taskTable, taskColumnTable } from './mockTables';
 
-const getAllTaskList = (_, res, ctx) => {
-  return res(ctx.status(200), ctx.json(taskListDatas));
+const getAllTaskColumn = (_, res, ctx) => {
+  const allTaskColumnData = taskColumnTable.map(
+    ({ id, columnName, taskIds }) => {
+      return {
+        id,
+        columnName,
+        tasks: taskIds.map((taskId) => taskTable[taskId]),
+      };
+    }
+  );
+  return res(ctx.status(200), ctx.json(allTaskColumnData));
 };
 
 const addNewCard = (req, res, ctx) => {
