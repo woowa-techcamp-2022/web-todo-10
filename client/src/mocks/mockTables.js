@@ -35,20 +35,20 @@ export const taskTable = {
   },
 };
 
-export const taskColumnTable = [
-  {
+export const taskColumnTable = {
+  1: {
     id: 1,
     columnName: '해야할 일',
     taskIds: [1111, 2222],
   },
-  {
+  2: {
     id: 2,
     columnName: '하고있는 일',
     taskIds: [3333, 4444],
   },
-  {
+  3: {
     id: 3,
     columnName: '한 일',
     taskIds: [5555],
   },
-];
+};

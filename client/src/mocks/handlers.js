@@ -2,7 +2,8 @@ import { rest } from 'msw';
 import { taskTable, taskColumnTable } from './mockTables';
 
 const getAllTaskColumn = (_, res, ctx) => {
-  const allTaskColumnData = taskColumnTable.map(
+  const taskColumnTableArr = Object.values(taskColumnTable);
+  const allTaskColumnData = taskColumnTableArr.map(
     ({ id, columnName, taskIds }) => {
       return {
         id,

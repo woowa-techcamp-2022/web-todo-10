@@ -4,8 +4,8 @@ const request = {
     return allListData;
   },
 
-  async getList() {
-    const listData = await (await fetch('/api/taskcolumn/:id')).json();
+  async getList(columnId) {
+    const listData = await (await fetch(`/api/taskcolumn/${columnId}`)).json();
     return listData;
   },
 

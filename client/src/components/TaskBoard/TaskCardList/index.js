@@ -4,24 +4,24 @@ import { makeEditingTaskCardElement } from './EditingTaskCard';
 import request from '@util/fetchUtil';
 
 export const makeTaskCardColumnElement = (cardListData) => {
-  const { listName, tasks, id } = cardListData;
+  const { columnName, tasks, id: columnId } = cardListData;
   const $taskCardColumn = document.createElement('section');
   $taskCardColumn.className = 'taskcard-column';
-  $taskCardColumn.dataset.id = id;
+  $taskCardColumn.dataset.id = columnId;
   $taskCardColumn.insertAdjacentHTML(
     'afterbegin',
-    getHeaderTemplate(listName, tasks.length)
+    getHeaderTemplate(columnName, tasks.length)
   );
   $taskCardColumn.append(makeTaskListElement(tasks));
-  activateElement($taskCardColumn);
+  activateElement($taskCardColumn, columnId);
   return $taskCardColumn;
 };
 
-const getHeaderTemplate = (listName, tasksCnt) => {
+const getHeaderTemplate = (columnName, tasksCnt) => {
   return `
       <div class="taskcard-column__header">
       <div class="taskcard-column__info">
-        <h2 class="taskcard-column__title">${listName}</h2>
+        <h2 class="taskcard-column__title">${columnName}</h2>
         <div class="taskcard-column__count">${tasksCnt}</div>
       </div>
       <div class="taskcard-list__utils">
@@ -40,10 +40,13 @@ const makeTaskListElement = (tasks) => {
   return $taskCardList;
 };
 
-const activateElement = ($taskCardColumn) => {
+const activateElement = ($taskCardColumn, columnId) => {
   const $addBtn = $taskCardColumn.querySelector('.taskcard-column__add-btn');
   $addBtn.addEventListener('click', addNewTaskCard.bind(null, $taskCardColumn));
-  $taskCardColumn.addEventListener('changeCard', updateList);
+  $taskCardColumn.addEventListener(
+    'changeCard',
+    updateList.bind(null, $taskCardColumn, columnId)
+  );
 };
 
 const addNewTaskCard = ($taskCardColumn) => {
@@ -52,6 +55,8 @@ const addNewTaskCard = ($taskCardColumn) => {
   $taksCardList.insertAdjacentElement('afterbegin', $editingTaskCard);
 };
 
-const updateList = () => {
-  const updatedList = $taskCardColumn.parentNode.replaceChild();
+const updateList = async ($taskCardColumn, columnId) => {
+  const updatedColumnData = await request.getList(columnId);
+  const $updatedListElement = makeTaskCardColumnElement(updatedColumnData);
+  $taskCardColumn.parentNode.replaceChild($updatedListElement, $taskCardColumn);
 };
