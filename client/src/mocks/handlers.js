@@ -38,16 +38,6 @@ const addNewCard = (req, res, ctx) => {
   };
   taskColumnTable[columnId].taskIds.unshift(newCardId);
   taskTable[newCardId] = newTaskCard;
-
-  if (!targetList) {
-    return res(
-      ctx.status(404),
-      ctx.json({
-        status: 'NOT_FOUND',
-        message: `잘못된 리스트 아이디입니다.${(listId, title, details)}`,
-      })
-    );
-  }
   return res(
     ctx.status(200),
     ctx.json({

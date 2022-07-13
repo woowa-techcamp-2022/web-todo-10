@@ -50,7 +50,7 @@ const activateElement = ($taskCardColumn, columnId) => {
 };
 
 const addNewTaskCard = ($taskCardColumn) => {
-  const $editingTaskCard = makeEditingTaskCardElement();
+  const $editingTaskCard = makeEditingTaskCardElement('NEW');
   const $taksCardList = $taskCardColumn.querySelector('.taskcard-list');
   $taksCardList.insertAdjacentElement('afterbegin', $editingTaskCard);
 };
