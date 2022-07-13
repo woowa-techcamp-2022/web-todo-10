@@ -77,11 +77,27 @@ const deleteCardData = (req, res, ctx) => {
   );
 };
 
+const moveCard = (req, res, ctx) => {
+  const { id: cardId } = req.params;
+  const { originalColumnId, newColumnId, originalIdx, newIdx } = req.body;
+  taskTable[cardId].columnId = newColumnId;
+  taskColumnTable[originalColumnId].taskIds.splice(originalIdx, 1);
+  taskColumnTable[newColumnId].taskIds.splice(newIdx, 0, +cardId);
+  return res(
+    ctx.status(200),
+    ctx.json({
+      status: 'OK',
+      message: '정상 이동되었습니다',
+    })
+  );
+};
+
 const handlers = [
   rest.get('/api/taskcolumns', getAllTaskColumn),
   rest.get('/api/taskcolumn/:id', getTaskColumn),
   rest.post('/api/taskcard', addNewCard),
   rest.patch('/api/taskcard/:id', updateCardData),
+  rest.patch('/api/taskcard/:id/move', moveCard),
   rest.delete('/api/taskcard/:id', deleteCardData),
 ];
 export default handlers;
