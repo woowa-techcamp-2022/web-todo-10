@@ -4,7 +4,7 @@ export const makeEditingTaskCardElement = (
   originalCardData = {},
   $taskCard
 ) => {
-  const $editingTaskCard = document.createElement('div');
+  const $editingTaskCard = document.createElement('form');
   $editingTaskCard.className = 'taskCard editing';
   $editingTaskCard.innerHTML = getInnerTemplate(originalCardData);
   activateElement($editingTaskCard, $taskCard);
@@ -14,20 +14,18 @@ export const makeEditingTaskCardElement = (
 const getInnerTemplate = (originalCardData = {}) => {
   const { title, details } = originalCardData;
   return `
-      <input type = "text" class="taskCard__title editing" placeholder="제목을 입력하세요" value=${
-        title ? title : ''
-      }>
+      <input type = "text" name='title' class="taskCard__title editing" placeholder="제목을 입력하세요" value='${title}' >
       ${getEditingTaskDetailTemplate(details)}
       <div class="util__btns">
           <button class="util__btn--big util__btn--cancel">취소</button>
-          <button class="util__btn--big util__btn--confirm">등록</button>
+          <button type='submit' class="util__btn--big util__btn--confirm">등록</button>
       </div>
     `;
 };
 
 const getEditingTaskDetailTemplate = (details) => {
   const originalDetailContent = details ? details.join('\n') : '';
-  return `<textarea placeholder="내용을 입력하세요" class="taskCard__detail--editing">${originalDetailContent}</textarea>`;
+  return `<textarea name='details' placeholder="내용을 입력하세요" class="taskCard__detail--editing">${originalDetailContent}</textarea>`;
 };
 
 const activateElement = ($editingTaskCard, $taskCard) => {
@@ -36,8 +34,14 @@ const activateElement = ($editingTaskCard, $taskCard) => {
     'click',
     cancelEdit.bind(null, $editingTaskCard, $taskCard)
   );
+  $editingTaskCard.addEventListener('submit', confirmEdit);
 };
 
 const cancelEdit = ($editingTaskCard, $taskCard) => {
   $editingTaskCard.parentNode.replaceChild($taskCard, $editingTaskCard);
+};
+
+const confirmEdit = (event) => {
+  event.preventDefault();
+  const { title, details } = event.target.elements;
 };
