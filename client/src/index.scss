@@ -41,5 +41,9 @@ body {
       background: $blue;
       color: $white;
     }
+
+    &--delete-warn {
+      background-image: url(@imgs/delete-warn.png);
+    }
   }
 }
