@@ -21,7 +21,7 @@ const getInnerTemplate = (originalCardData = {}) => {
       ${getEditingTaskDetailTemplate(details)}
       <div class="util__btns">
           <button class="util__btn--big util__btn--cancel">취소</button>
-          <button type='submit' class="util__btn--big util__btn--confirm">등록</button>
+          <button type='submit' class="util__btn--big util__btn--confirm" disabled>등록</button>
       </div>
     `;
 };
