@@ -1,3 +1,11 @@
-.taskCard.editing {
-  border: 1px solid #0075de;
+.taskcard {
+  &.editing {
+    border: 1px solid #0075de;
+  }
+
+  &__detail--editing {
+    margin: 0.5rem 0;
+    width: 100%;
+    font-size: 0.875rem;
+  }
 }

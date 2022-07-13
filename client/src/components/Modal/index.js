@@ -1,11 +1,11 @@
 import './index.scss';
 import request from '@util/fetchUtil.js';
 
-export const makeAlertModalElement = (cardId) => {
+export const makeAlertModalElement = ($taskCard) => {
   const $alertModal = document.createElement('div');
   $alertModal.className = 'modal-container';
   $alertModal.innerHTML = getInnerTemplate();
-  activateElement($alertModal, cardId);
+  activateElement($alertModal, $taskCard);
   return $alertModal;
 };
 
@@ -21,7 +21,7 @@ const getInnerTemplate = () => {
     `;
 };
 
-const activateElement = ($alertModal, cardId) => {
+const activateElement = ($alertModal, $taskCard) => {
   const $cancelBtn = $alertModal.querySelector('.util__btn--cancel');
   const $confirmBtn = $alertModal.querySelector('.util__btn--confirm');
 
@@ -30,14 +30,18 @@ const activateElement = ($alertModal, cardId) => {
     cancelDeleteCard.bind(null, $alertModal)
   );
 
-  $confirmBtn.addEventListener('click', confirmDeleteCard.bind(null, cardId));
+  $confirmBtn.addEventListener(
+    'click',
+    confirmDeleteCard.bind(null, $alertModal, $taskCard)
+  );
 };
 
 const cancelDeleteCard = ($alertModal) => {
   $alertModal.remove();
 };
 
-const confirmDeleteCard = async (cardId, { target }) => {
-  await request.deleteCard(cardId);
-  target.dispatchEvent(new Event('changeCard', { bubbles: true }));
+const confirmDeleteCard = async ($alertModal, $taskCard) => {
+  await request.deleteCard($taskCard.dataset.id);
+  $alertModal.remove();
+  $taskCard.dispatchEvent(new Event('changeCard', { bubbles: true }));
 };

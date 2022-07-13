@@ -54,11 +54,6 @@ const activateElement = ($taskCard, cardData) => {
     showDeleteWarning.bind(null, $taskCard, $deleteBtn)
   );
 
-  $deleteBtn.addEventListener(
-    'click',
-    handleDeleteBtnClick.bind(null, cardData.id)
-  );
-
   $taskCard.addEventListener(
     'mousedown',
     handleMouseDownEvent.bind(null, $taskCard)
@@ -79,12 +74,15 @@ const showDeleteWarning = ($taskCard, $deleteBtn) => {
   $deleteBtn.classList.toggle('util__btn--delete-warn');
 };
 
-const handleDeleteBtnClick = (cardId, { target }) => {
-  target.parentNode.append(makeAlertModalElement(cardId));
+const handleDeleteBtnClick = ($taskCard) => {
+  document.body.append(makeAlertModalElement($taskCard));
 };
 
 const handleMouseDownEvent = ($taskCard, event) => {
   if (event.detail !== 1) return;
+  if (hasClassName(event.target, 'taskcard__delete-btn')) {
+    handleDeleteBtnClick($taskCard);
+  }
   startDragNDrop($taskCard, event);
 };
 
