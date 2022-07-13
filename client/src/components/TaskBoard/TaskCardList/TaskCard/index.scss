@@ -27,4 +27,9 @@
     top: 1rem;
     right: 1rem;
   }
+
+  &__delete-warning {
+    background-color: rgba(red, 0.5);
+    border: 1px red solid;
+  }
 }

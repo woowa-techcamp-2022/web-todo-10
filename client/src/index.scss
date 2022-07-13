@@ -41,5 +41,9 @@ body {
       background: $blue;
       color: $white;
     }
+
+    &--delete-warning {
+      background: url(@imgs/delete-warn.png) no-repeat center;
+    }
   }
 }

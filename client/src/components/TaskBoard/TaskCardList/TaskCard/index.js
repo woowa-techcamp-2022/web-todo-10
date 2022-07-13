@@ -28,13 +28,28 @@ const getTaskDetailTemplate = (details) => {
 };
 
 const activateElement = ($taskCard, cardData) => {
+  const $deleteBtn = $taskCard.querySelector('.taskCard__delete-btn');
   $taskCard.addEventListener(
     'dblclick',
     convertToEditMode.bind(null, $taskCard, cardData)
+  );
+
+  $deleteBtn.addEventListener(
+    'mouseover',
+    showDeleteWarning.bind(null, $taskCard, $deleteBtn)
+  );
+  $deleteBtn.addEventListener(
+    'mouseleave',
+    showDeleteWarning.bind(null, $taskCard, $deleteBtn)
   );
 };
 
 const convertToEditMode = ($taskCard, cardData) => {
   const $editingCardElement = makeEditingTaskCardElement(cardData, $taskCard);
   $taskCard.parentNode.replaceChild($editingCardElement, $taskCard);
+};
+
+const showDeleteWarning = ($taskCard, $deleteBtn, e) => {
+  $taskCard.classList.toggle('taskCard__delete-warning');
+  $deleteBtn.classList.toggle('util__btn--delete-warning');
 };
