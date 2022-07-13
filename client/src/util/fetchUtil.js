@@ -1,28 +1,26 @@
 const request = {
   async allLists() {
-    const allListData = await (await fetch(`/api/tasklists`)).json();
+    const allListData = await (await fetch(`/api/taskcolumns`)).json();
     return allListData;
   },
 
   async getList() {
-    const listData = await (await fetch('/api/tasklist/:id')).json();
+    const listData = await (await fetch('/api/taskcolumn/:id')).json();
     return listData;
   },
 
-  async deleteCard(cardId, listId) {
-    const requestMessage = makeRequestMessage('DELETE', { listId });
+  async deleteCard(cardId) {
+    const requestMessage = makeRequestMessage('DELETE');
     const changedList = await (
       await fetch(`/api/taskcard/${cardId}`, requestMessage)
     ).json();
     return changedList;
   },
 
-  async updateCard(cardId, title, details, listId) {
-    console.log(cardId, title, details, listId);
+  async updateCard(cardId, title, details) {
     const requestMessage = makeRequestMessage('PATCH', {
       title,
       details,
-      listId,
     });
     const changedList = await (
       await fetch(`/api/taskcard/${cardId}`, requestMessage)
