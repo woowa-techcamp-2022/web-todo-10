@@ -21,3 +21,9 @@ export const getElementIndex = (node) => {
   }
   return idx;
 };
+
+export const getElementPos = ($) => {
+  const y = $.getBoundingClientRect().top;
+  const x = $.getBoundingClientRect().left;
+  return [x, y];
+};

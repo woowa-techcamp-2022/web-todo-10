@@ -8,7 +8,7 @@ export const makeEditingTaskCardElement = (
   $originalTaskCard = null
 ) => {
   const $editingTaskCard = document.createElement('form');
-  $editingTaskCard.className = 'taskCard editing';
+  $editingTaskCard.className = 'taskcard editing';
   $editingTaskCard.dataset.id = originalCardData?.id;
   $editingTaskCard.innerHTML = getInnerTemplate(originalCardData);
   activateElement($editingTaskCard, $originalTaskCard, type);
@@ -18,7 +18,7 @@ export const makeEditingTaskCardElement = (
 const getInnerTemplate = (originalCardData = {}) => {
   const { title, details } = originalCardData;
   return `
-      <input type = "text" name='title' class="taskCard__title editing" placeholder="제목을 입력하세요" value='${
+      <input type = "text" name='title' class="taskcard__title editing" placeholder="제목을 입력하세요" value='${
         title || ''
       }' >
       ${getEditingTaskDetailTemplate(details)}
@@ -31,15 +31,15 @@ const getInnerTemplate = (originalCardData = {}) => {
 
 const getEditingTaskDetailTemplate = (details) => {
   const originalDetailContent = details ? details.join('\n') : '';
-  return `<textarea name='details' placeholder="내용을 입력하세요" class="taskCard__detail--editing" maxlength=${MAX_TASK_DETAIL_LENGTH}>${originalDetailContent}</textarea>`;
+  return `<textarea name='details' placeholder="내용을 입력하세요" class="taskcard__detail--editing" maxlength=${MAX_TASK_DETAIL_LENGTH}>${originalDetailContent}</textarea>`;
 };
 
 const activateElement = ($editingTaskCard, $originalTaskCard, type) => {
   const $cancelBtn = $editingTaskCard.querySelector('.util__btn--cancel');
   const $submitBtn = $editingTaskCard.querySelector('.util__btn--confirm');
-  const $titleInput = $editingTaskCard.querySelector('.taskCard__title');
+  const $titleInput = $editingTaskCard.querySelector('.taskcard__title');
   const $detailsTextArea = $editingTaskCard.querySelector(
-    '.taskCard__detail--editing'
+    '.taskcard__detail--editing'
   );
 
   $cancelBtn.addEventListener(
@@ -84,13 +84,3 @@ const handleConfirmBtnClick = async (type, event) => {
   else throw new Error('invalid card type');
   event.target.dispatchEvent(new Event('changeCard', { bubbles: true }));
 };
-
-// const confirmEdit = async (event) => {
-//   const { title, details } = event.target.elements;
-//   const cardId = event.target.dataset.id;
-//   const listId = event.target.closest('.taskcard-column').dataset.id;
-//   const newTitle = title.value;
-//   const newDetails = details.value.split('\n');
-//   await request.updateCard(cardId, newTitle, newDetails, listId);
-//   event.target.dispatchEvent(new Event('changeCard', { bubbles: true }));
-// };

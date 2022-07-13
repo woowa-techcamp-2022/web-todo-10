@@ -7,6 +7,8 @@ import {
   hasClassName,
   getElementIndex,
 } from '@util/domUtil.js';
+import Point from '@util/Point';
+import { getElementPos } from '../../../../util/domUtil';
 
 export const makeTaskCardElement = (cardData) => {
   const $taskCard = document.createElement('li');
@@ -58,7 +60,7 @@ const activateElement = ($taskCard, cardData) => {
 
   $taskCard.addEventListener(
     'mousedown',
-    startDragNDrop.bind(null, $taskCard, cardData.columnId)
+    handleMouseDownEvent.bind(null, $taskCard, cardData.columnId)
   );
 };
 
@@ -80,18 +82,31 @@ const handleDeleteBtnClick = (cardId, { target }) => {
   target.parentNode.append(makeAlertModalElement(cardId));
 };
 
-const startDragNDrop = ($taskCard, columnId, e) => {
-  //원래 정보
-  const [originalCardTop, originalCardLeft] = getCardPositions($taskCard);
-  const originalColumnID = columnId;
-  const originalCardIdx = getElementIndex($taskCard);
+////////////////
+////////////////
+////////////////
+////////////////
+////////////////
+////////////////
+////////////////
+////////////////
+////////////////
+////////////////
+////////////////
+////////////////
 
-  const $shadowCard = makeShadowCardNode($taskCard);
-  const $followingCard = makeFollowingCardNode(
-    $taskCard,
-    originalCardTop,
-    originalCardLeft
-  );
+const handleMouseDownEvent = ($taskCard, columnId, e) => {
+  if (e.detail !== 1) return;
+  startDragNDrop($taskCard, columnId, e);
+};
+
+const startDragNDrop = ($taskCard, columnId, e) => {
+  const originalCardPoint = getOriginalCardPoint($taskCard);
+  const originalCardIdx = getElementIndex($taskCard);
+  const originalColumnID = columnId;
+
+  const $shadowCard = makeShadowCardElement($taskCard);
+  const $followingCard = makeFollowingCardElement($taskCard, originalCardPoint);
 
   //카드 내 mouse위치
   const pointerInCardX = e.clientX - originalCardLeft;
@@ -114,20 +129,19 @@ const startDragNDrop = ($taskCard, columnId, e) => {
   document.body.addEventListener('mouseup', mouseUpHandler, { once: true });
 };
 
-const getCardPositions = ($card) => {
-  const originalCardTop = $card.getBoundingClientRect().top;
-  const originalCardLeft = $card.getBoundingClientRect().left;
-  return [originalCardTop, originalCardLeft];
+const getOriginalCardPoint = ($taskCard) => {
+  const [originalCardX, originalCardY] = getElementPos($taskCard);
+  return new Point(originalCardX, originalCardY);
 };
 
-const makeShadowCardNode = ($card) => {
+const makeShadowCardElement = ($card) => {
   const $shadowCard = $card.cloneNode(true);
   $shadowCard.classList.add('shadow');
   insertElementBefore($shadowCard, $card);
   return $shadowCard;
 };
 
-const makeFollowingCardNode = ($card, originalCardTop, originalCardLeft) => {
+const makeFollowingCardElement = ($card, originalCardTop, originalCardLeft) => {
   const followingCardNode = $card;
   followingCardNode.classList.add('following');
   moveFollowingCard($card, originalCardLeft, originalCardTop);
