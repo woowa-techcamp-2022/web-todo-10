@@ -1,5 +1,6 @@
 import './index.scss';
 import { makeEditingTaskCardElement } from '../EditingTaskCard';
+import { makeAlertModalElement } from '../../../Modal';
 
 export const makeTaskCardElement = (cardData) => {
   const $taskCard = document.createElement('li');
@@ -43,6 +44,11 @@ const activateElement = ($taskCard, cardData) => {
     'mouseleave',
     showDeleteWarning.bind(null, $taskCard, $deleteBtn)
   );
+
+  $deleteBtn.addEventListener(
+    'click',
+    handleDeleteBtnClick.bind(null, cardData.id)
+  );
 };
 
 const convertToEditMode = ($taskCard, cardData) => {
@@ -53,4 +59,8 @@ const convertToEditMode = ($taskCard, cardData) => {
 const showDeleteWarning = ($taskCard, $deleteBtn, e) => {
   $taskCard.classList.toggle('taskCard__delete-warn');
   $deleteBtn.classList.toggle('util__btn--delete-warn');
+};
+
+const handleDeleteBtnClick = (cardId, { target }) => {
+  target.parentNode.append(makeAlertModalElement(cardId));
 };
