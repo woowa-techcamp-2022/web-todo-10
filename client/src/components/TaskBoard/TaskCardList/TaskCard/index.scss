@@ -1,11 +1,15 @@
 @import '@style/variable.scss';
 
 .taskcard {
-  position: relative;
-  padding: 1rem;
-  background-color: $white;
-  border-radius: 0.375rem;
-  width: 19.25rem;
+  padding: 0.5rem 0;
+
+  &-contents {
+    position: relative;
+    padding: 1rem;
+    background-color: $white;
+    border-radius: 0.375rem;
+    width: 19.25rem;
+  }
 
   &__title {
     font-weight: $bold;
@@ -13,6 +17,10 @@
 
   &__detail {
     font-size: 0.875rem;
+
+    &-container {
+      margin: 0.5rem 0;
+    }
   }
 
   &__author {
@@ -26,13 +34,13 @@
     right: 1rem;
   }
 
-  &__delete-warn {
+  &__delete-warn > .taskcard-contents {
     background-color: rgba($red, 0.5);
     border: 1px red solid;
   }
 }
 
-.shadow {
+.shadow > .taskcard-contents {
   opacity: 0.2;
   box-shadow: 0 0 0 1px $blue inset;
 }

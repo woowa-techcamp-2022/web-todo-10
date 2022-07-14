@@ -1,6 +1,7 @@
 import './index.scss';
 import request from '@util/fetchUtil';
 import { makeLogMenuItemElement } from './LogMenuItem';
+import { hasClassName } from '../../util/domUtil';
 
 export const makeLogMenuElement = () => {
   const $logMenu = document.createElement('div');
@@ -33,7 +34,7 @@ const activateElement = ($logMenu) => {
   const $openBtn = $logMenu.querySelector('.log-menu__btn--open');
   const $closeBtn = $logMenu.querySelector('.log-menu__btn--close');
   $openBtn.addEventListener('click', openMenu.bind(null, $logMenu));
-  $closeBtn.addEventListener('click', closeMenu.bind(null, $logMenu));
+  $logMenu.addEventListener('click', closeMenu.bind(null, $logMenu));
 };
 
 const openMenu = ($logMenu) => {
@@ -51,7 +52,13 @@ const updateLogItems = async ($logMenu) => {
   });
 };
 
-const closeMenu = ($logMenu) => {
-  const $logContainer = $logMenu.querySelector('.log-container');
-  $logContainer.classList.add('closed');
+const closeMenu = ($logMenu, { target }) => {
+  if (hasClassName(target, 'log-menu__btn--open')) return;
+  if (
+    hasClassName(target, 'log-menu__btn--close') ||
+    !target.closest('.log-container')
+  ) {
+    const $logContainer = $logMenu.querySelector('.log-container');
+    $logContainer.classList.add('closed');
+  }
 };
