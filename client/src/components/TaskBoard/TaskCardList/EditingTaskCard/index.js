@@ -9,6 +9,8 @@ export const makeEditingTaskCardElement = (
 ) => {
   const $editingTaskCard = document.createElement('form');
   $editingTaskCard.className = 'taskcard';
+  $editingTaskCard.classList.add('editing');
+  $editingTaskCard.dataset.type = type;
   $editingTaskCard.dataset.id = originalCardData?.id;
   $editingTaskCard.innerHTML = getInnerTemplate(originalCardData);
   activateElement($editingTaskCard, $originalTaskCard, type);
@@ -18,7 +20,7 @@ export const makeEditingTaskCardElement = (
 const getInnerTemplate = (originalCardData = {}) => {
   const { title, details } = originalCardData;
   return `
-      <div class='taskcard-contents editing'>
+      <div class='taskcard-contents'>
         <input type = "text" name='title' class="taskcard__title editing" placeholder="제목을 입력하세요" value='${
           title || ''
         }' >

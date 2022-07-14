@@ -1,5 +1,5 @@
 .taskcard {
-  &.editing {
+  &.editing > .taskcard-contents {
     border: 1px solid #0075de;
   }
 
