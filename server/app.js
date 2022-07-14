@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const PORT = 5001;
 const mysql = require('mysql2');
+const path = require('path');
 
 const pool = mysql.createPool({
   host: '3.38.160.215',
@@ -66,18 +67,18 @@ async function getTaskColumn(req, res) {
     if (connection) connection.release();
     res.json(taskColumnData);
   } catch {
-    res.send('해당 이름을 가진 taskList가 존재하지 않습니다.');
+    res.json('해당 이름을 가진 taskList가 존재하지 않습니다.');
   }
 }
 
 async function addNewCard(req, res) {
   let connection;
 
-  const { columnId, title, contents } = req.body;
+  const { columnId, title, details } = req.body;
   const newTaskCard = {
     columnId,
     title,
-    contents,
+    details,
   };
   try {
     connection = await promisePool.getConnection();
@@ -94,8 +95,8 @@ async function addNewCard(req, res) {
     }
 
     let [addingTaskData, field] = await connection.query(
-      `INSERT INTO task (columnId, title, contents) VALUES (${columnId}, "${title}", '${JSON.stringify(
-        contents
+      `INSERT INTO task (columnId, title, details) VALUES (${columnId}, "${title}", '${JSON.stringify(
+        details
       )}')`
     );
 
@@ -111,7 +112,7 @@ UPDATE taskColumn SET taskIds = '[${taskColumnTable[0].taskIds}]' WHERE (idx = $
     });*/
 
     if (connection) connection.release();
-    res.send('성공');
+    res.json('성공');
   } catch (err) {
     res.send(err);
   }
@@ -140,7 +141,7 @@ async function updateCardData(req, res) {
         regDate: new Date().getTime(),
       });
     } else if (
-      prevTaskData[0].contents.join(' ').trim() !== details.join(' ').trim()
+      prevTaskData[0].details.join(' ').trim() !== details.join(' ').trim()
     ) {
       await activeLog({
         originalColumnName: prevTaskColumnTable[0].name,
@@ -153,12 +154,12 @@ async function updateCardData(req, res) {
     }*/
 
     await connection.query(
-      `UPDATE task SET title = "${title}", contents = '${JSON.stringify(
+      `UPDATE task SET title = "${title}", details = '${JSON.stringify(
         details
       )}', columnId = ${listId} WHERE (id = ${cardId})`
     );
     if (connection) connection.release();
-    res.send('카드가 업데이트됬습니다.');
+    res.json('카드가 업데이트됬습니다.');
   } catch (err) {
     res.send(err);
   }
@@ -167,18 +168,24 @@ async function updateCardData(req, res) {
 async function deleteCardData(req, res) {
   let connection;
   const { id: cardId } = req.params;
-  const { listId } = req.body;
+
   try {
     connection = await promisePool.getConnection();
-    const [prevTaskColumnData, fields] = await connection.query(
-      `SELECT * FROM taskColumn WHERE idx = ${listId}`
-    );
-    await connection.query(
-      `UPDATE taskColumn SET taskIds = '[${prevTaskColumnData[0].taskIds}]' WHERE (idx = ${listId})`
-    );
-    const [prevTaskData, field_prevTaskData] = await connection.query(
+    const [[targetTaskCard]] = await connection.query(
       `SELECT * FROM task WHERE id = ${cardId}`
     );
+    const columnId = targetTaskCard.columnId;
+    const [[targetTaskColumn]] = await connection.query(
+      `SELECT * FROM taskColumn WHERE idx = ${columnId}`
+    );
+    const deletedTaskIds = targetTaskColumn.taskIds.filter(
+      (id) => id !== +cardId
+    );
+
+    await connection.query(
+      `UPDATE taskColumn SET taskIds = '[${deletedTaskIds}]' WHERE (idx = ${columnId})`
+    );
+
     await connection.query(`DELETE FROM task WHERE id = ${cardId}`);
 
     /*
@@ -190,7 +197,7 @@ async function deleteCardData(req, res) {
     });*/
 
     if (connection) connection.release();
-    res.send('카드가 삭제되었습니다.');
+    res.json('카드가 삭제되었습니다.');
   } catch (err) {
     res.send(err);
   }
@@ -212,12 +219,19 @@ async function createActiveLog(logData) {
   );
   if (connection) connection.release();
 }
+
+app.get('/api/taskcolumns', getAllTaskColumn);
+app.get('/api/taskcolumn/:id', getTaskColumn);
+app.post('/api/taskcard', addNewCard);
+app.patch('/api/taskcard/:id', updateCardData);
+app.delete('/api/taskcard/:id', deleteCardData);
+app.get('/*.js', function (req, res) {
+  res.sendFile(path.join(process.cwd(), 'dist', 'main_bundle.js'));
+});
+app.get('/', function (req, res) {
+  res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
+});
+
 app.listen(PORT, () => {
   console.log(`server listening on ${PORT}`);
 });
-
-app.get('/api/taskColumns', getAllTaskColumn);
-app.get('/api/taskColumns/:id', getTaskColumn);
-app.post('/api/taskCard', addNewCard);
-app.patch('/api/taskCard/:id', updateCardData);
-app.delete('/api/taskCard/:id', deleteCardData);
