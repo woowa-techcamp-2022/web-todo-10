@@ -80,7 +80,6 @@ async function findTaskDataByTaskIds(connection, taskIds) {
 async function addNewCard(req, res) {
   let connection;
   const { columnId, title, details } = req.body;
-  const newTaskCard = { columnId, title, details };
 
   try {
     connection = await pool.getConnection();
@@ -186,7 +185,6 @@ async function deleteCardData(req, res) {
     const deletedTaskIds = targetTaskColumn.taskIds.filter(
       (id) => id !== +cardId
     );
-
     await connection.query(
       `UPDATE taskColumn SET taskIds = '[${deletedTaskIds}]' WHERE (idx = ${columnId})`
     );
@@ -201,10 +199,11 @@ async function deleteCardData(req, res) {
       regDate: new Date().getTime(),
     });*/
 
-    if (connection) connection.release();
     res.json('카드가 삭제되었습니다.');
   } catch (err) {
     res.send(err);
+  } finally {
+    connection?.release();
   }
 }
 
@@ -234,6 +233,40 @@ async function getLogData(_, res) {
     res.json(allLogData);
   } catch (err) {
     res.send(err);
+  } finally {
+    connection?.release();
+  }
+}
+
+async function moveCard(req, res) {
+  const { id: cardId } = req.params;
+  const { originalColumnId, newColumnId, originalIdx, newIdx } = req.body;
+  const connection = await pool.getConnection();
+  try {
+    //현재 카드의 부모를 새로운 부모로 바꿔준다.
+    await connection.query(
+      `UPDATE task SET columnId = ${newColumnId} WHERE (id = ${cardId})`
+    );
+    //현재 카드 부모에서 기존에 있던 카드를 지워준다.
+    const [[{ taskIds: orignalTaskColumnTaskIds }]] = await connection.query(
+      `SELECT taskIds from taskColumn WHERE idx = ${originalColumnId}`
+    );
+    orignalTaskColumnTaskIds.splice(originalIdx, 1);
+    await connection.query(
+      `UPDATE taskColumn SET taskIds = '[${orignalTaskColumnTaskIds}]' WHERE (idx = ${originalColumnId})`
+    );
+    //이동할 카드 부모에서 추가해준다.
+    const [[{ taskIds: newTaskColumnTaskIds }]] = await connection.query(
+      `SELECT taskIds from taskColumn WHERE idx = ${newColumnId}`
+    );
+    newTaskColumnTaskIds.splice(newIdx, 0, +cardId);
+    await connection.query(
+      `UPDATE taskColumn SET taskIds ='[${newtaskColumnTaskIds}]' WHERE (idx = ${newColumnId})`
+    );
+  } catch (err) {
+    res.send(err);
+  } finally {
+    connection?.release();
   }
 }
 
@@ -246,6 +279,7 @@ app.post('/api/taskcard', addNewCard);
 app.patch('/api/taskcard/:id', updateCardData);
 app.delete('/api/taskcard/:id', deleteCardData);
 app.get('/api/log', getLogData);
+app.patch('/api/taskcard/:id/move', moveCard);
 
 app.get('/*.js', function (req, res) {
   res.sendFile(path.join(process.cwd(), 'dist', 'main_bundle.js'));
