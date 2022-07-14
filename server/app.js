@@ -3,13 +3,15 @@ const app = express();
 const PORT = 5001;
 const mysql = require('mysql2');
 const path = require('path');
+const env = require('dotenv');
+env.config();
 
 const pool = mysql
   .createPool({
-    host: '3.38.160.215',
-    user: 'kimsuhwan',
-    password: 'soo199809',
-    database: 'todolist',
+    host: process.env.HOST,
+    user: process.env.USERNAME,
+    password: process.env.PASSWORD,
+    database: process.env.DATABASE,
   })
   .promise();
 
@@ -125,47 +127,49 @@ UPDATE taskColumn SET taskIds = '[${taskColumnData.taskIds}]' WHERE (idx = ${col
 async function updateCardData(req, res) {
   let connection;
   const { id: cardId } = req.params;
-  const { title, details, listId } = req.body;
+  const { title, details } = req.body;
 
   try {
     connection = await pool.getConnection();
 
-    const [prevTaskData, field_prevTaskData] = await conneciton.query(
+    const [[taskData]] = await connection.query(
       `SELECT * FROM task WHERE id = ${cardId}`
     );
-    const [prevTaskColumnTable, field_prevTaskColumnTable] =
-      await connection.query(
-        `SELECT * FROM taskColumn WHERE idx = ${prevTaskData[0].columnId}`
-      );
-    /*if (prevTaskData[0].title !== title) {
-      await activeLog({
-        originalColumnName: prevTaskColumnTable[0].name,
+    const [[prevTaskColumnTable]] = await connection.query(
+      `SELECT * FROM taskColumn WHERE idx = ${taskData.columnId}`
+    );
+
+    if (taskData.title !== title) {
+      await createActiveLog({
+        originalColumnName: prevTaskColumnTable.name,
+        prevTaskTitle: taskData.title,
         taskTitle: title,
         actionType: 'EDIT_TITLE',
-        regDate: new Date().getTime(),
+        regDate: new Date(),
       });
-    } else if (
-      prevTaskData[0].details.join(' ').trim() !== details.join(' ').trim()
-    ) {
-      await activeLog({
-        originalColumnName: prevTaskColumnTable[0].name,
+    } else if (taskData.details.join('').trim() !== details.join('').trim()) {
+      await createActiveLog({
+        originalColumnName: prevTaskColumnTable.name,
         taskTitle: title,
         actionType: 'EDIT_CONTENT',
-        regDate: new Date().getTime(),
+        regDate: new Date(),
       });
     } else {
-      return;
-    }*/
+      return res.json({
+        status: 'ok',
+        message: '변경된 데이터가 없습니다',
+      });
+    }
 
     await connection.query(
       `UPDATE task SET title = "${title}", details = '${JSON.stringify(
         details
-      )}', columnId = ${listId} WHERE (id = ${cardId})`
+      )}', columnId = ${taskData.columnId} WHERE (id = ${cardId})`
     );
     if (connection) connection.release();
-    res.json('카드가 업데이트됬습니다.');
+    res.json({ status: 'ok', message: '카드가 업데이트됐습니다.' });
   } catch (err) {
-    res.send(err);
+    res.json({ err });
   }
 }
 
@@ -194,13 +198,12 @@ async function deleteCardData(req, res) {
 
     await connection.query(`DELETE FROM task WHERE id = ${cardId}`);
 
-    /*
     await createActiveLog({
-      originalColumnName: prevTaskColumnData[0].name,
-      taskTitle: prevTaskData[0].title,
+      originalColumnName: targetTaskColumn.name,
+      taskTitle: targetTaskCard.title,
       actionType: 'DELETE',
-      regDate: new Date().getTime(),
-    });*/
+      regDate: new Date(),
+    });
 
     res.json('카드가 삭제되었습니다.');
   } catch (err) {
@@ -219,6 +222,7 @@ async function createActiveLog(logData) {
     prevTaskTitle,
     actionType,
   } = logData;
+
   const regDate = new Date();
   await connection.query(
     `INSERT INTO activeLog (originalColumnName, changedColumnName, taskTitle, prevTaskTitle, actionType, regDate) VALUES ("${originalColumnName}", "${changedColumnName}", "${taskTitle}", "${prevTaskTitle}", "${actionType}", "${regDate}")`
@@ -251,23 +255,39 @@ async function moveCard(req, res) {
       `UPDATE task SET columnId = ${newColumnId} WHERE (id = ${cardId})`
     );
     //현재 카드 부모에서 기존에 있던 카드를 지워준다.
-    const [[{ taskIds: orignalTaskColumnTaskIds }]] = await connection.query(
-      `SELECT taskIds from taskColumn WHERE idx = ${originalColumnId}`
+    const [[originalTaskColumn]] = await connection.query(
+      `SELECT * from taskColumn WHERE idx = ${originalColumnId}`
     );
-    orignalTaskColumnTaskIds.splice(originalIdx, 1);
+
+    originalTaskColumn.taskIds.splice(originalIdx, 1);
     await connection.query(
-      `UPDATE taskColumn SET taskIds = '[${orignalTaskColumnTaskIds}]' WHERE (idx = ${originalColumnId})`
+      `UPDATE taskColumn SET taskIds = '[${originalTaskColumn.taskIds}]' WHERE (idx = ${originalColumnId})`
     );
 
     //이동할 카드 부모에서 추가해준다.
-    const [[newTaskColumnTaskIds]] = await connection.query(
-      `SELECT taskIds FROM taskColumn WHERE idx = ${newColumnId}`
+    const [[newTaskColumn]] = await connection.query(
+      `SELECT * FROM taskColumn WHERE idx = ${newColumnId}`
     );
-    let { taskIds } = newTaskColumnTaskIds;
-    taskIds.splice(newIdx, 0, +cardId);
+    newTaskColumn.taskIds.splice(newIdx, 0, +cardId);
     await connection.query(
-      `UPDATE taskColumn SET taskIds ='[${taskIds}]' WHERE (idx = ${newColumnId})`
+      `UPDATE taskColumn SET taskIds ='[${newTaskColumn.taskIds}]' WHERE (idx = ${newColumnId})`
     );
+
+    const [[taskData]] = await connection.query(
+      `SELECT * FROM task WHERE id = ${cardId}`
+    );
+
+    await createActiveLog({
+      originalColumnName: originalTaskColumn.name,
+      changedColumnName: newTaskColumn.name,
+      taskTitle: taskData.title,
+      actionType: 'MOVE',
+    });
+
+    res.json({
+      status: 'ok',
+      message: '정상적으로 카드가 이동되었습니다.',
+    });
   } catch (err) {
     res.send(err);
   } finally {

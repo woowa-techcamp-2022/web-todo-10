@@ -38,17 +38,19 @@ const getLogItemText = (actionType, logItemData) => {
 };
 
 const getMoveLogText = (logItemData) => {
-  const { start, end, taskTitle } = logItemData;
+  const { originalColumnName, changedColumnName, taskTitle } = logItemData;
   return `
-    ${highlightText(taskTitle)}를 ${highlightText(start)}에서 ${highlightText(
-    end
-  )}로 이동하였습니다.`;
+    ${highlightText(taskTitle)}를 ${highlightText(
+    originalColumnName
+  )}에서 ${highlightText(changedColumnName)}로 이동하였습니다.`;
 };
 
 const getAddLogText = (logItemData) => {
-  const { start, taskTitle } = logItemData;
+  const { originalColumnName, taskTitle } = logItemData;
   return `
-  ${highlightText(start)}에 ${highlightText(taskTitle)}를 등록하였습니다.`;
+  ${highlightText(originalColumnName)}에 ${highlightText(
+    taskTitle
+  )}를 등록하였습니다.`;
 };
 
 const getEditTitleText = (logItemData) => {

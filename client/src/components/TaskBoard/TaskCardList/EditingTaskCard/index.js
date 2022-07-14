@@ -82,8 +82,7 @@ const handleConfirmBtnClick = async (type, event) => {
   const listId = event.target.closest('.taskcard-column').dataset.id;
   const newTitle = title.value;
   const newDetails = details.value.split('\n');
-  if (type === 'EDIT')
-    await request.updateCard(cardId, newTitle, newDetails, listId);
+  if (type === 'EDIT') await request.updateCard(cardId, newTitle, newDetails);
   else if (type === 'NEW') await request.addCard(listId, newTitle, newDetails);
   else throw new Error('invalid card type');
   event.target.dispatchEvent(new Event('changeCard', { bubbles: true }));

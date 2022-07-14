@@ -32,7 +32,6 @@ const getListTemplate = () => {
 
 const activateElement = ($logMenu) => {
   const $openBtn = $logMenu.querySelector('.log-menu__btn--open');
-  const $closeBtn = $logMenu.querySelector('.log-menu__btn--close');
   $openBtn.addEventListener('click', openMenu.bind(null, $logMenu));
   $logMenu.addEventListener('click', closeMenu.bind(null, $logMenu));
 };
