@@ -35,7 +35,7 @@ module.exports = {
     ],
   },
   watch: true,
-  devtool: 'eval',
+  devtool: 'source-map',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),

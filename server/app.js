@@ -4,35 +4,32 @@ const PORT = 5001;
 const mysql = require('mysql2');
 const path = require('path');
 
-const pool = mysql.createPool({
-  host: '3.38.160.215',
-  user: 'kimsuhwan',
-  password: 'soo199809',
-  database: 'todolist',
-});
-const promisePool = pool.promise();
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+const pool = mysql
+  .createPool({
+    host: '3.38.160.215',
+    user: 'kimsuhwan',
+    password: 'soo199809',
+    database: 'todolist',
+  })
+  .promise();
 
 async function getAllTaskColumn(req, res) {
   let connection;
-  let allTaskColumnData = [];
+  const allTaskColumnData = [];
   try {
-    connection = await promisePool.getConnection();
-    const [taskColumnTableArr, fields] = await connection.query(
-      `SELECT * FROM taskColumn`
-    );
-    for (const taskColumnTable of taskColumnTableArr) {
-      const taskColumnTableTaskIds = taskColumnTable.taskIds.join(',');
-      const [taskDatas, fields] =
-        taskColumnTableTaskIds.length > 0
-          ? await connection.query(
-              `SELECT * FROM task WHERE id IN (${taskColumnTableTaskIds}) ORDER BY FIELD(id, ${taskColumnTableTaskIds})`
-            )
-          : [[], []];
+    connection = await pool.getConnection();
+    const [taskColumns] = await connection.query(`SELECT * FROM taskColumn`);
+    for (const taskColumn of taskColumns) {
+      const taskIdString = taskColumn.taskIds.join(',');
+      const [taskDatas] = taskIdString.length
+        ? await connection.query(
+            `SELECT * FROM task WHERE id IN (${taskIdString}) ORDER BY FIELD(id, ${taskIdString})`
+          )
+        : [[]];
+
       allTaskColumnData.push({
-        id: taskColumnTable.idx,
-        columnName: taskColumnTable.name,
+        id: taskColumn.idx,
+        columnName: taskColumn.name,
         tasks: taskDatas,
       });
     }
@@ -41,7 +38,7 @@ async function getAllTaskColumn(req, res) {
 
     res.json(allTaskColumnData);
   } catch (error) {
-    res.send(error);
+    res.json({ status: 404, message: '조회에 실패했습니다.' });
   }
 }
 
@@ -50,7 +47,7 @@ async function getTaskColumn(req, res) {
   const { id: columnId } = req.params;
   const taskColumnData = {};
   try {
-    connection = await promisePool.getConnection();
+    connection = await pool.getConnection();
 
     const [taskColumnTable, fields_taskColumn] = await connection.query(
       `SELECT * FROM taskColumn WHERE idx = ${columnId};`
@@ -81,7 +78,7 @@ async function addNewCard(req, res) {
     details,
   };
   try {
-    connection = await promisePool.getConnection();
+    connection = await pool.getConnection();
 
     const [taskColumnTable, fields_taskColumn] = await connection.query(
       `SELECT * FROM taskColumn WHERE idx = ${columnId}`
@@ -124,7 +121,7 @@ async function updateCardData(req, res) {
   const { title, details, listId } = req.body;
 
   try {
-    connection = await promisePool.getConnection();
+    connection = await pool.getConnection();
 
     const [prevTaskData, field_prevTaskData] = await conneciton.query(
       `SELECT * FROM task WHERE id = ${cardId}`
@@ -170,7 +167,7 @@ async function deleteCardData(req, res) {
   const { id: cardId } = req.params;
 
   try {
-    connection = await promisePool.getConnection();
+    connection = await pool.getConnection();
     const [[targetTaskCard]] = await connection.query(
       `SELECT * FROM task WHERE id = ${cardId}`
     );
@@ -204,7 +201,7 @@ async function deleteCardData(req, res) {
 }
 
 async function createActiveLog(logData) {
-  const connection = await promisePool.getConnection();
+  const connection = await pool.getConnection();
   const {
     originalColumnName,
     changedColumnName,
@@ -219,6 +216,9 @@ async function createActiveLog(logData) {
   );
   if (connection) connection.release();
 }
+
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 app.get('/api/taskcolumns', getAllTaskColumn);
 app.get('/api/taskcolumn/:id', getTaskColumn);
