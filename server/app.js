@@ -19,6 +19,7 @@ async function getAllTaskColumn(req, res) {
   try {
     connection = await pool.getConnection();
     const [taskColumns] = await connection.query(`SELECT * FROM taskColumn`);
+
     for (const taskColumn of taskColumns) {
       const taskIdString = taskColumn.taskIds.join(',');
       const [taskDatas] = taskIdString.length
@@ -33,85 +34,92 @@ async function getAllTaskColumn(req, res) {
         tasks: taskDatas,
       });
     }
-
-    if (connection) connection.release();
-
     res.json(allTaskColumnData);
   } catch (error) {
     res.json({ status: 404, message: '조회에 실패했습니다.' });
+  } finally {
+    connection?.release();
   }
 }
 
 async function getTaskColumn(req, res) {
   let connection;
   const { id: columnId } = req.params;
-  const taskColumnData = {};
   try {
     connection = await pool.getConnection();
 
-    const [taskColumnTable, fields_taskColumn] = await connection.query(
+    const [[taskColumn]] = await connection.query(
       `SELECT * FROM taskColumn WHERE idx = ${columnId};`
     );
-    const taskColumnTableTaskIds = taskColumnTable[0].taskIds.join(',');
 
-    const [taskDatas, fields_task] = await connection.query(
-      `SELECT * FROM task WHERE id IN (${taskColumnTableTaskIds}) ORDER BY FIELD(id,${taskColumnTableTaskIds})`
-    );
-
-    taskColumnData.id = columnId;
-    taskColumnData.columnName = taskColumnTable[0].name;
-    taskColumnData.tasks = taskDatas;
-    if (connection) connection.release();
-    res.json(taskColumnData);
+    findTaskDataByTaskIds(connection, taskColumn.taskIds).then((taskDatas) => {
+      const taskColumnData = {
+        id: columnId,
+        columnName: taskColumn.name,
+        tasks: taskDatas,
+      };
+      res.json(taskColumnData);
+    });
   } catch {
     res.json('해당 이름을 가진 taskList가 존재하지 않습니다.');
+  } finally {
+    connection?.release();
   }
+}
+
+async function findTaskDataByTaskIds(connection, taskIds) {
+  const taskIdString = taskIds.join(',');
+  const [taskDatas] = taskIdString.length
+    ? await connection.query(
+        `SELECT * FROM task WHERE id IN (${taskIdString}) ORDER BY FIELD(id, ${taskIdString})`
+      )
+    : [[]];
+  return taskDatas;
 }
 
 async function addNewCard(req, res) {
   let connection;
-
   const { columnId, title, details } = req.body;
-  const newTaskCard = {
-    columnId,
-    title,
-    details,
-  };
+  const newTaskCard = { columnId, title, details };
+
   try {
     connection = await pool.getConnection();
 
-    const [taskColumnTable, fields_taskColumn] = await connection.query(
+    const [[taskColumnData]] = await connection.query(
       `SELECT * FROM taskColumn WHERE idx = ${columnId}`
     );
 
-    if (taskColumnTable.length === 0) {
+    if (!taskColumnData) {
       res.json({
         status: 'NOT_FOUND',
         message: `잘못된 리스트 아이디입니다.`,
       });
     }
 
-    let [addingTaskData, field] = await connection.query(
+    const [newTaskData] = await connection.query(
       `INSERT INTO task (columnId, title, details) VALUES (${columnId}, "${title}", '${JSON.stringify(
         details
       )}')`
     );
 
-    taskColumnTable[0].taskIds.unshift(addingTaskData.insertId);
+    taskColumnData.taskIds.unshift(newTaskData.insertId);
     await connection.query(`
-UPDATE taskColumn SET taskIds = '[${taskColumnTable[0].taskIds}]' WHERE (idx = ${columnId})`);
+UPDATE taskColumn SET taskIds = '[${taskColumnData.taskIds}]' WHERE (idx = ${columnId})`);
 
-    /*await createActiveLog({
-      originalColumnName: taskColumnTable[0].name,
+    await createActiveLog({
+      originalColumnName: taskColumnData.name,
       taskTitle: title,
       actionType: 'ADD',
-      regDate: new Date().getTime(),
-    });*/
+    });
 
-    if (connection) connection.release();
-    res.json('성공');
+    res.json({
+      status: 'OK',
+      message: `정상적으로 추가되었습니다.`,
+    });
   } catch (err) {
     res.send(err);
+  } finally {
+    connection?.release();
   }
 }
 
@@ -208,13 +216,25 @@ async function createActiveLog(logData) {
     taskTitle,
     prevTaskTitle,
     actionType,
-    regDate,
   } = logData;
-  //ADD, MOVE, EDIT_TITLE, EDIT_CONTENT, DELETE
-  const [activeLog, field_activeLog] = await connect.query(
+  const regDate = new Date();
+  await connection.query(
     `INSERT INTO activeLog (originalColumnName, changedColumnName, taskTitle, prevTaskTitle, actionType, regDate) VALUES ("${originalColumnName}", "${changedColumnName}", "${taskTitle}", "${prevTaskTitle}", "${actionType}", "${regDate}")`
   );
-  if (connection) connection.release();
+  connection?.release();
+}
+
+async function getLogData(_, res) {
+  const connection = await pool.getConnection();
+  try {
+    const [allLogData] = await connection.query(
+      `SELECT * FROM activeLog ORDER BY idx DESC`
+    );
+    if (connection) connection.release();
+    res.json(allLogData);
+  } catch (err) {
+    res.send(err);
+  }
 }
 
 app.use(express.urlencoded({ extended: false }));
@@ -225,6 +245,8 @@ app.get('/api/taskcolumn/:id', getTaskColumn);
 app.post('/api/taskcard', addNewCard);
 app.patch('/api/taskcard/:id', updateCardData);
 app.delete('/api/taskcard/:id', deleteCardData);
+app.get('/api/log', getLogData);
+
 app.get('/*.js', function (req, res) {
   res.sendFile(path.join(process.cwd(), 'dist', 'main_bundle.js'));
 });
