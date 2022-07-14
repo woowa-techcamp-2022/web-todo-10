@@ -1,0 +1,29 @@
+@import '@style/variable.scss';
+
+.log {
+  width: 20.75rem;
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
+
+  &-emoji {
+    font-size: 2rem;
+  }
+
+  &-content {
+    flex-grow: 1;
+    width: fit-content;
+  }
+
+  &-description {
+    margin: 0.5rem 0;
+  }
+
+  &-timestamp {
+    color: $grey3;
+  }
+}
+
+strong {
+  font-weight: 700;
+}

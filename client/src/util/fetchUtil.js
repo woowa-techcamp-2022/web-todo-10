@@ -9,6 +9,11 @@ const request = {
     return listData;
   },
 
+  async getLog() {
+    const logData = await (await fetch(`/api/log`)).json();
+    return logData;
+  },
+
   async deleteCard(cardId) {
     const requestMessage = makeRequestMessage('DELETE');
     const res = await (

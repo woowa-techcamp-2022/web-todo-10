@@ -8,10 +8,7 @@ export const makeTaskCardColumnElement = (cardListData) => {
   const $taskCardColumn = document.createElement('section');
   $taskCardColumn.className = 'taskcard-column';
   $taskCardColumn.dataset.id = columnId;
-  $taskCardColumn.insertAdjacentHTML(
-    'afterbegin',
-    getHeaderTemplate(columnName, tasks.length)
-  );
+  $taskCardColumn.innerHTML = getHeaderTemplate(columnName, tasks.length);
   $taskCardColumn.append(makeTaskListElement(tasks));
   activateElement($taskCardColumn, columnId);
   return $taskCardColumn;
