@@ -53,7 +53,7 @@ const activateElement = ($taskCardColumn, columnId) => {
 const handleAddBtnClick = ($taskCardColumn) => {
   const $taskCardList = $taskCardColumn.querySelector('.taskcard-list');
   const $firstTaskCard = $taskCardList.firstElementChild;
-  if ($firstTaskCard.dataset.type === 'NEW') {
+  if ($firstTaskCard?.dataset.type === 'NEW') {
     $firstTaskCard.remove();
   } else {
     addNewTaskCard($taskCardList);
