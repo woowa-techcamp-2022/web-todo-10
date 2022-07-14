@@ -11,7 +11,10 @@ module.exports = {
   },
   output: {
     filename: '[name]_bundle.js',
-    path: path.resolve(__dirname, 'dist'),
+    path:
+      process.env.NODE_ENV === 'production'
+        ? path.resolve(__dirname, '..', 'server', 'dist')
+        : path.resolve(__dirname, 'dist'),
   },
   module: {
     rules: [

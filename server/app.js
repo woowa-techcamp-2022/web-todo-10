@@ -1,16 +1,8 @@
 const express = require('express');
-const cors = require('cors');
 const app = express();
 const PORT = 5001;
 const mysql = require('mysql2');
 const path = require('path');
-
-const whitelist = ['http://localhost:3000', 'http://localhost:5001'];
-const corsOptions = {
-  origin: function (origin, cb) {
-    if (whitelist.includes(origin)) cb(null, true);
-  },
-};
 
 const pool = mysql.createPool({
   host: '3.38.160.215',
@@ -20,7 +12,6 @@ const pool = mysql.createPool({
 });
 const promisePool = pool.promise();
 
-app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
@@ -223,15 +214,19 @@ async function createActiveLog(logData) {
   );
   if (connection) connection.release();
 }
-app.listen(PORT, () => {
-  console.log(`server listening on ${PORT}`);
-});
 
 app.get('/api/taskColumns', getAllTaskColumn);
 app.get('/api/taskColumns/:id', getTaskColumn);
 app.post('/api/taskCard', addNewCard);
 app.patch('/api/taskCard/:id', updateCardData);
 app.delete('/api/taskCard/:id', deleteCardData);
+app.get('/*.js', function (req, res) {
+  res.sendFile(path.join(process.cwd(), 'dist', 'main_bundle.js'));
+});
 app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname, '..', '/client', '/dist', '/index.html'));
+  res.sendFile(path.join(process.cwd(), 'dist', 'index.html'));
+});
+
+app.listen(PORT, () => {
+  console.log(`server listening on ${PORT}`);
 });
