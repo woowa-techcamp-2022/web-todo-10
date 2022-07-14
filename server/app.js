@@ -3,13 +3,15 @@ const app = express();
 const PORT = 5001;
 const mysql = require('mysql2');
 const path = require('path');
+const env = require('dotenv');
+env.config();
 
 const pool = mysql
   .createPool({
-    host: '3.38.160.215',
-    user: 'kimsuhwan',
-    password: 'soo199809',
-    database: 'todolist',
+    host: process.env.HOST,
+    user: process.env.USERNAME,
+    password: process.env.PASSWORD,
+    database: process.env.DATABASE,
   })
   .promise();
 
