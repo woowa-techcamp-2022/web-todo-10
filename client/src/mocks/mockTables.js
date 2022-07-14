@@ -52,3 +52,42 @@ export const taskColumnTable = {
     taskIds: [5555],
   },
 };
+
+export const logTable = [
+  {
+    start: '해야할 일',
+    end: '하고 있는 일',
+    taskTitle: 'HTML/CSS 공부하기',
+    actionType: 'MOVE',
+    regDate: new Date('2022-07-14').toLocaleString(),
+  },
+  {
+    start: '해야할 일',
+    end: null,
+    taskTitle: 'HTML/CSS 시작하기',
+    actionType: 'DELETE',
+    regDate: new Date('2022-07-14').toLocaleString(),
+  },
+  {
+    start: '해야할 일',
+    end: null,
+    taskTitle: 'sdfsdfsdfsdf',
+    actionType: 'ADD',
+    regDate: new Date('2022-07-14').toLocaleString(),
+  },
+  {
+    start: '해야할 일',
+    end: null,
+    taskTitle: 'qoiuoi',
+    prevTaskTitle: 'dfsfsdfs',
+    actionType: 'EDIT_TITLE',
+    regDate: new Date('2022-07-14').toLocaleString(),
+  },
+  {
+    start: '해야할 일',
+    end: null,
+    taskTitle: 'HTML/CSS 공부하기',
+    actionType: 'EDIT_CONTENT',
+    regDate: new Date('2022-07-14').toLocaleString(),
+  },
+];

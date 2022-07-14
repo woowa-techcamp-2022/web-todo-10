@@ -1,5 +1,5 @@
 import { rest } from 'msw';
-import { taskTable, taskColumnTable } from './mockTables';
+import { taskTable, taskColumnTable, logTable } from './mockTables';
 
 const getAllTaskColumn = (_, res, ctx) => {
   const taskColumnTableArr = Object.values(taskColumnTable);
@@ -24,6 +24,10 @@ const getTaskColumn = (req, res, ctx) => {
     tasks: taskIds.map((taskId) => taskTable[taskId]),
   };
   return res(ctx.status(200), ctx.json(taskColumnData));
+};
+
+const getLog = (req, res, ctx) => {
+  return res(ctx.status(200), ctx.json(logTable));
 };
 
 const addNewCard = (req, res, ctx) => {
@@ -95,6 +99,7 @@ const moveCard = (req, res, ctx) => {
 const handlers = [
   rest.get('/api/taskcolumns', getAllTaskColumn),
   rest.get('/api/taskcolumn/:id', getTaskColumn),
+  rest.get('/api/log', getLog),
   rest.post('/api/taskcard', addNewCard),
   rest.patch('/api/taskcard/:id', updateCardData),
   rest.patch('/api/taskcard/:id/move', moveCard),
