@@ -21,7 +21,8 @@ const getCloseBtnTemplate = () => {
 
 const getLogItemTemplate = (logItemData) => {
   const { actionType, regDate } = logItemData;
-
+  console.log(regDate);
+  console.log(new Date(regDate));
   return `
     <div class="log">
       <span class="log-emoji">${ACTION_TYPE_EMOJI_MAP[actionType]}</span>
