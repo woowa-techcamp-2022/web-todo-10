@@ -23,13 +23,15 @@ export const makeTaskCardElement = (cardData) => {
 const getTaskCardInnerTemplate = (cardData) => {
   const { title, details, author } = cardData;
   return `
-    <h3 class="taskcard__title">${title}</h3>
-    <ul class="taskcard__detail-container">
-      ${getTaskDetailTemplate(details)}
-    </ul>
-    <span class="taskcard__author">author by ${author}</span>
-    <button class="util__btn util__btn--delete taskcard__delete-btn"></button>
-  `;
+    <div class='taskcard-contents'>
+      <h3 class="taskcard__title">${title}</h3>
+      <ul class="taskcard__detail-container">
+        ${getTaskDetailTemplate(details)}
+      </ul>
+      <span class="taskcard__author">author by ${author}</span>
+      <button class="util__btn util__btn--delete taskcard__delete-btn"></button>
+    </div>
+    `;
 };
 
 const getTaskDetailTemplate = (details) => {
