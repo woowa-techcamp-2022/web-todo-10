@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const PORT = 5001;
 const mysql = require('mysql2');
+const path = require('path');
 
 const pool = mysql.createPool({
   host: '3.38.160.215',
@@ -221,3 +222,6 @@ app.get('/api/taskColumns/:id', getTaskColumn);
 app.post('/api/taskCard', addNewCard);
 app.patch('/api/taskCard/:id', updateCardData);
 app.delete('/api/taskCard/:id', deleteCardData);
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, '..', '/client', '/dist', '/index.html'));
+});

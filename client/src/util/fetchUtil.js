@@ -1,23 +1,30 @@
+const URL =
+  process.env.NODE_ENV === 'development'
+    ? 'localhost:5001'
+    : 'http://3.38.160.215:5001';
+
 const request = {
   async allLists() {
-    const allListData = await (await fetch(`/api/taskcolumns`)).json();
+    const allListData = await (await fetch(`${URL}/api/taskcolumns`)).json();
     return allListData;
   },
 
   async getList(columnId) {
-    const listData = await (await fetch(`/api/taskcolumn/${columnId}`)).json();
+    const listData = await (
+      await fetch(`${URL}/api/taskcolumn/${columnId}`)
+    ).json();
     return listData;
   },
 
   async getLog() {
-    const logData = await (await fetch(`/api/log`)).json();
+    const logData = await (await fetch(`${URL}/api/log`)).json();
     return logData;
   },
 
   async deleteCard(cardId) {
     const requestMessage = makeRequestMessage('DELETE');
     const res = await (
-      await fetch(`/api/taskcard/${cardId}`, requestMessage)
+      await fetch(`${URL}/api/taskcard/${cardId}`, requestMessage)
     ).json();
     return res;
   },
@@ -28,7 +35,7 @@ const request = {
       details,
     });
     const res = await (
-      await fetch(`/api/taskcard/${cardId}`, requestMessage)
+      await fetch(`${URL}/api/taskcard/${cardId}`, requestMessage)
     ).json();
     return res;
   },
@@ -39,7 +46,9 @@ const request = {
       title,
       details,
     });
-    const res = await (await fetch(`/api/taskcard`, requestMessage)).json();
+    const res = await (
+      await fetch(`${URL}/api/taskcard`, requestMessage)
+    ).json();
     return res;
   },
 
@@ -51,7 +60,7 @@ const request = {
       newIdx,
     });
     const res = await (
-      await fetch(`/api/taskcard/${cardId}/move`, requestMessage)
+      await fetch(`${URL}/api/taskcard/${cardId}/move`, requestMessage)
     ).json();
     return res;
   },

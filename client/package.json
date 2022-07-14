@@ -4,7 +4,8 @@
   "description": "Todo client",
   "main": "index.js",
   "scripts": {
-    "dev": "NODE_ENV=development webpack & serve dist"
+    "dev": "NODE_ENV=development webpack & serve dist",
+    "build": "NODE_ENV=production webpack & serve dist"
   },
   "author": "happyGyu, suhwan2004",
   "license": "ISC",
