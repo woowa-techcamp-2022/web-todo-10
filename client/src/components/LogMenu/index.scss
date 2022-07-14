@@ -23,9 +23,10 @@
     transition: all ease-out 0.5s;
   }
 
-  &-itmes {
+  &-items {
     height: 100%;
-    overflow-x: scroll;
+    overflow-y: scroll;
+    flex-grow: 1;
   }
 }
 
