@@ -1,6 +1,6 @@
 import './index.scss';
 import request from '@util/fetchUtil';
-import { makeLogMenuElement } from './ActiveLogList';
+import { makeLogMenuElement } from './LogMenu';
 
 export const makeHeaderElement = () => {
   const $header = document.createElement('header');

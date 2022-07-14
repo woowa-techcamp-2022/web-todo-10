@@ -23,6 +23,7 @@
   }
 
   &-content {
+    flex-grow: 1;
     width: fit-content;
   }
 
@@ -30,7 +31,20 @@
     margin: 0.5rem 0;
   }
 
-  &.log-timestamp {
+  &-timestamp {
     color: $grey3;
   }
+}
+
+.close-btn {
+  position: absolute;
+  top: 2.5rem;
+  right: 5rem;
+  width: 2rem;
+  height: 2rem;
+  background: url(@imgs/close.png) no-repeat center;
+}
+
+strong {
+  font-weight: 700;
 }
