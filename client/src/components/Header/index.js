@@ -1,4 +1,6 @@
 import './index.scss';
+import request from '@util/fetchUtil';
+import { makeLogMenuElement } from './ActiveLogList';
 
 export const makeHeaderElement = () => {
   const $header = document.createElement('header');
@@ -17,5 +19,10 @@ const getInnerTemplate = () => {
 
 const activateElement = ($header) => {
   const $menuBtn = $header.querySelector('.header__menu-btn');
-  $menuBtn.addEventListener('click', () => console.log('hi'));
+  $menuBtn.addEventListener('click', openLogMenu);
+};
+
+const openLogMenu = async () => {
+  const logData = await request.getLog();
+  document.body.append(makeLogMenuElement(logData));
 };
