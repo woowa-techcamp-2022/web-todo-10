@@ -86,4 +86,22 @@ export const logTable = [
     actionType: 'EDIT_CONTENT',
     regDate: new Date('2022-07-14').toString(),
   },
+  {
+    start: '해야할 일',
+    taskTitle: 'HTML/CSS 공부하기',
+    actionType: 'EDIT_CONTENT',
+    regDate: new Date('2022-07-14').toString(),
+  },
+  {
+    start: '해야할 일',
+    taskTitle: 'HTML/CSS 공부하기',
+    actionType: 'EDIT_CONTENT',
+    regDate: new Date('2022-07-14').toString(),
+  },
+  {
+    start: '해야할 일',
+    taskTitle: 'HTML/CSS 공부하기',
+    actionType: 'EDIT_CONTENT',
+    regDate: new Date('2022-07-14').toString(),
+  },
 ];
