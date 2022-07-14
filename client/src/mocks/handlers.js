@@ -1,37 +1,14 @@
 import { rest } from 'msw';
-import { taskTable, taskColumnTable } from './mockTables';
+import taskListDatas from './mockData';
 
-const getAllTaskColumn = (_, res, ctx) => {
-  const taskColumnTableArr = Object.values(taskColumnTable);
-  const allTaskColumnData = taskColumnTableArr.map(
-    ({ id, columnName, taskIds }) => {
-      return {
-        id,
-        columnName,
-        tasks: taskIds.map((taskId) => taskTable[taskId]),
-      };
-    }
-  );
-  return res(ctx.status(200), ctx.json(allTaskColumnData));
-};
-
-const getTaskColumn = (req, res, ctx) => {
-  const { id: columnId } = req.params;
-  const { id, columnName, taskIds } = taskColumnTable[columnId];
-  const taskColumnData = {
-    id,
-    columnName,
-    tasks: taskIds.map((taskId) => taskTable[taskId]),
-  };
-  return res(ctx.status(200), ctx.json(taskColumnData));
+const getAllTaskList = (_, res, ctx) => {
+  return res(ctx.status(200), ctx.json(taskListDatas));
 };
 
 const addNewCard = (req, res, ctx) => {
-  const { columnId, title, details } = req.body;
-  const newCardId = new Date().getTime();
+  const { listId, title, details } = req.body;
   const newTaskCard = {
-    id: newCardId,
-    columnId,
+    id: new Date().getTime(),
     title,
     details,
     author: 'web',
@@ -49,16 +26,14 @@ const addNewCard = (req, res, ctx) => {
 
 const updateCardData = (req, res, ctx) => {
   const { id: cardId } = req.params;
-  const updateInfo = req.body;
-  taskTable[cardId] = { ...taskTable[cardId], ...updateInfo };
+  const { title, details, listId } = req.body;
 
-  return res(
-    ctx.status(200),
-    ctx.json({
-      status: 'OK',
-      message: '정상 수정되었습니다',
-    })
-  );
+  //sql 학습을 아직 진행하지 않아 막짜둔 로직.
+  const targetList = taskListDatas.find((listData) => listData.id === +listId);
+  const targetCard = targetList.tasks.find((task) => task.id === +cardId);
+  targetCard.title = title;
+  targetCard.details = details;
+  return res(ctx.status(200), ctx.json(targetList));
 };
 
 const deleteCardData = (req, res, ctx) => {
@@ -93,8 +68,7 @@ const moveCard = (req, res, ctx) => {
 };
 
 const handlers = [
-  rest.get('/api/taskcolumns', getAllTaskColumn),
-  rest.get('/api/taskcolumn/:id', getTaskColumn),
+  rest.get('/api/tasklists', getAllTaskList),
   rest.post('/api/taskcard', addNewCard),
   rest.patch('/api/taskcard/:id', updateCardData),
   rest.patch('/api/taskcard/:id/move', moveCard),
