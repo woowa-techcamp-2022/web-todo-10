@@ -24,7 +24,6 @@ const getInnerTemplate = () => {
 const activateElement = ($alertModal, $taskCard) => {
   const $cancelBtn = $alertModal.querySelector('.util__btn--cancel');
   const $confirmBtn = $alertModal.querySelector('.util__btn--confirm');
-
   $cancelBtn.addEventListener(
     'click',
     cancelDeleteCard.bind(null, $alertModal)
