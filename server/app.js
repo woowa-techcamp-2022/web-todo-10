@@ -1,8 +1,16 @@
 const express = require('express');
+const cors = require('cors');
 const app = express();
 const PORT = 5001;
 const mysql = require('mysql2');
 const path = require('path');
+
+const whitelist = ['http://localhost:3000'];
+const corsOptions = {
+  origin: function (origin, cb) {
+    if (whitelist.includes(origin)) cb(null, true);
+  },
+};
 
 const pool = mysql.createPool({
   host: '3.38.160.215',
@@ -11,6 +19,8 @@ const pool = mysql.createPool({
   database: 'todolist',
 });
 const promisePool = pool.promise();
+
+app.use(cors(corsOptions));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
