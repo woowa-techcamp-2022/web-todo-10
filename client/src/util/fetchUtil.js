@@ -11,10 +11,10 @@ const request = {
 
   async deleteCard(cardId) {
     const requestMessage = makeRequestMessage('DELETE');
-    const changedList = await (
+    const res = await (
       await fetch(`/api/taskcard/${cardId}`, requestMessage)
     ).json();
-    return changedList;
+    return res;
   },
 
   async updateCard(cardId, title, details) {
@@ -22,22 +22,33 @@ const request = {
       title,
       details,
     });
-    const changedList = await (
+    const res = await (
       await fetch(`/api/taskcard/${cardId}`, requestMessage)
     ).json();
-    return changedList;
+    return res;
   },
 
-  async addCard(listId, title, details) {
+  async addCard(columnId, title, details) {
     const requestMessage = makeRequestMessage('POST', {
-      listId,
+      columnId,
       title,
       details,
     });
-    const updatedColumnState = await (
-      await fetch(`/api/taskcard`, requestMessage)
+    const res = await (await fetch(`/api/taskcard`, requestMessage)).json();
+    return res;
+  },
+
+  async moveCard(cardId, originalColumnId, newColumnId, originalIdx, newIdx) {
+    const requestMessage = makeRequestMessage('PATCH', {
+      originalColumnId,
+      newColumnId,
+      originalIdx,
+      newIdx,
+    });
+    const res = await (
+      await fetch(`/api/taskcard/${cardId}/move`, requestMessage)
     ).json();
-    return updatedColumnState;
+    return res;
   },
 };
 
