@@ -2,6 +2,7 @@ import './index.scss';
 import { makeTaskCardElement } from './TaskCard';
 import { makeEditingTaskCardElement } from './EditingTaskCard';
 import request from '@util/fetchUtil';
+import { hasClassName } from '../../../util/domUtil';
 
 export const makeTaskCardColumnElement = (cardListData) => {
   const { columnName, tasks, id: columnId } = cardListData;
@@ -39,17 +40,29 @@ const makeTaskListElement = (tasks) => {
 
 const activateElement = ($taskCardColumn, columnId) => {
   const $addBtn = $taskCardColumn.querySelector('.taskcard-column__add-btn');
-  $addBtn.addEventListener('click', addNewTaskCard.bind(null, $taskCardColumn));
+  $addBtn.addEventListener(
+    'click',
+    handleAddBtnClick.bind(null, $taskCardColumn)
+  );
   $taskCardColumn.addEventListener(
     'changeCard',
     updateList.bind(null, $taskCardColumn, columnId)
   );
 };
 
-const addNewTaskCard = ($taskCardColumn) => {
+const handleAddBtnClick = ($taskCardColumn) => {
+  const $taskCardList = $taskCardColumn.querySelector('.taskcard-list');
+  const $firstCard = $taskCardList.firstElementChild;
+  if (hasClassName($firstCard, 'editing')) {
+    $firstCard.remove();
+  } else {
+    addNewTaskCard($taskCardList);
+  }
+};
+
+const addNewTaskCard = ($taskCardList) => {
   const $editingTaskCard = makeEditingTaskCardElement('NEW');
-  const $taksCardList = $taskCardColumn.querySelector('.taskcard-list');
-  $taksCardList.insertAdjacentElement('afterbegin', $editingTaskCard);
+  $taskCardList.insertAdjacentElement('afterbegin', $editingTaskCard);
 };
 
 const updateList = async ($taskCardColumn, columnId) => {
