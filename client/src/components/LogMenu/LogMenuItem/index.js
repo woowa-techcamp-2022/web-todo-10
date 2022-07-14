@@ -1,28 +1,15 @@
 import './index.scss';
 import { ACTION_TYPE_EMOJI_MAP } from '@/constant';
 
-export const makeLogMenuElement = (logData) => {
-  const $logMenu = document.createElement('div');
-  $logMenu.className = 'log-container';
-  $logMenu.innerHTML = getInnerTemplate(logData);
-  activateElement($logMenu);
-  return $logMenu;
-};
-
-const getInnerTemplate = (logData) => {
-  const closeBtnTemplate = getCloseBtnTemplate();
-  const logItemsTemplate = logData.map(getLogItemTemplate).join('');
-  return closeBtnTemplate + logItemsTemplate;
-};
-
-const getCloseBtnTemplate = () => {
-  return `<button class='close-btn'></button>`;
+export const makeLogMenuItemElement = (logItemData) => {
+  const $logMenuItem = document.createElement('div');
+  $logMenuItem.className = 'log';
+  $logMenuItem.innerHTML = getLogItemTemplate(logItemData);
+  return $logMenuItem;
 };
 
 const getLogItemTemplate = (logItemData) => {
   const { actionType, regDate } = logItemData;
-  console.log(regDate);
-  console.log(new Date(regDate));
   return `
     <div class="log">
       <span class="log-emoji">${ACTION_TYPE_EMOJI_MAP[actionType]}</span>
@@ -97,13 +84,4 @@ const calTimePassed = (targetDate) => {
   if (hours < 24) return `${hours}시간`;
   const date = Math.ceil(hours / 24);
   return `${date}일`;
-};
-
-const activateElement = ($logMenu) => {
-  const $colseBtn = $logMenu.querySelector('.close-btn');
-  $colseBtn.addEventListener('click', closeMenu.bind(null, $logMenu));
-};
-
-const closeMenu = ($logMenu) => {
-  $logMenu.remove();
 };
