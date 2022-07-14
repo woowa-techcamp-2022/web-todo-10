@@ -7,8 +7,10 @@ import { makeLogMenuElement } from './components/LogMenu';
 
 async function main() {
   if (process.env.NODE_ENV === 'development') {
+    console.log('hi', process.env.NODE_ENV);
     serviceWorker.start();
   }
+  console.log(process.env.NODE_ENV);
 
   const $app = document.querySelector('#app');
   const taskListDatas = await request.allLists();
