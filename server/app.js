@@ -218,6 +218,7 @@ async function createActiveLog(logData) {
   const {
     originalColumnName,
     changedColumnName,
+    editingColumnTitle,
     taskTitle,
     prevTaskTitle,
     actionType,
@@ -225,7 +226,7 @@ async function createActiveLog(logData) {
 
   const regDate = new Date();
   await connection.query(
-    `INSERT INTO activeLog (originalColumnName, changedColumnName, taskTitle, prevTaskTitle, actionType, regDate) VALUES ("${originalColumnName}", "${changedColumnName}", "${taskTitle}", "${prevTaskTitle}", "${actionType}", "${regDate}")`
+    `INSERT INTO activeLog (originalColumnName, changedColumnName, editingColumnTitle, taskTitle, prevTaskTitle, actionType, regDate) VALUES ("${originalColumnName}", "${changedColumnName}", "${editingColumnTitle}", "${taskTitle}", "${prevTaskTitle}", "${actionType}", "${regDate}")`
   );
   connection?.release();
 }
@@ -294,6 +295,31 @@ async function moveCard(req, res) {
     connection?.release();
   }
 }
+async function updateColumnTitle(req, res) {
+  const { id: columnId } = req.params;
+  const { title } = req.body;
+  let connection;
+  try {
+    connection = await pool.getConnection();
+    const [[targetTaskColumn]] = await connection.query(
+      `SELECT * FROM taskColumn WHERE idx = ${columnId}`
+    );
+    await connection.query(
+      `UPDATE taskColumn SET title = "${title}" WHERE (idx = ${columnId})`
+    );
+    await createActiveLog({
+      originalColumnName: targetTaskColumn.title,
+      editingColumnTitle: title,
+      actionType: 'EDIT-COLUMNTITLE',
+      regDate: new Date(),
+    });
+    res.json({ status: 'ok', message: '정상적으로 제목이 변경되었습니다.' });
+  } catch (err) {
+    res.send(err);
+  } finally {
+    connection?.release();
+  }
+}
 
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
@@ -305,6 +331,7 @@ app.patch('/api/taskcard/:id', updateCardData);
 app.delete('/api/taskcard/:id', deleteCardData);
 app.get('/api/log', getLogData);
 app.patch('/api/taskcard/:id/move', moveCard);
+app.patch('/api/taskcolumn/:id', updateColumnTitle);
 
 app.get('/*.js', function (req, res) {
   res.sendFile(path.join(process.cwd(), 'dist', 'main_bundle.js'));
