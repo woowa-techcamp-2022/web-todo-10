@@ -28,7 +28,7 @@ const getTaskCardInnerTemplate = (cardData) => {
       <ul class="taskcard__detail-container">
         ${getTaskDetailTemplate(details)}
       </ul>
-      <span class="taskcard__author">author by ${author}</span>
+      <span class="taskcard__author">author by ${author || 'web'}</span>
       <button class="util__btn util__btn--delete taskcard__delete-btn"></button>
     </div>
     `;

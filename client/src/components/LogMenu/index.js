@@ -5,7 +5,7 @@ import { hasClassName } from '../../util/domUtil';
 
 export const makeLogMenuElement = () => {
   const $logMenu = document.createElement('div');
-  $logMenu.className = 'log-menu';
+  $logMenu.className = 'log-menu closed';
   $logMenu.innerHTML = getInnerTemplate();
   activateElement($logMenu);
   return $logMenu;
@@ -40,6 +40,7 @@ const openMenu = ($logMenu) => {
   const $logContainer = $logMenu.querySelector('.log-container');
   updateLogItems($logMenu);
   $logContainer.classList.remove('closed');
+  $logMenu.classList.remove('closed');
 };
 
 const updateLogItems = async ($logMenu) => {
@@ -59,5 +60,6 @@ const closeMenu = ($logMenu, { target }) => {
   ) {
     const $logContainer = $logMenu.querySelector('.log-container');
     $logContainer.classList.add('closed');
+    $logMenu.classList.add('closed');
   }
 };

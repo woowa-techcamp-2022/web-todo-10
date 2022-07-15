@@ -18,13 +18,3 @@ async function main() {
 }
 
 main();
-
-const activateElement = ($header) => {
-  const $menuBtn = $header.querySelector('.header__menu-btn');
-  $menuBtn.addEventListener('click', openLogMenu);
-};
-
-const openLogMenu = async () => {
-  const logData = await request.getLog();
-  document.body.append(makeLogMenuElement(logData));
-};
