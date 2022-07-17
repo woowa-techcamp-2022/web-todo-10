@@ -1,9 +1,9 @@
-import './index.scss';
-import request from '@util/fetchUtil.js';
+import "./index.scss";
+import { createElement } from "../../util/domUtil";
+import request from "@util/fetchUtil.js";
 
 export const makeAlertModalElement = ($taskCard) => {
-  const $alertModal = document.createElement('div');
-  $alertModal.className = 'modal-container';
+  const $alertModal = createElement("div", "modal-container");
   $alertModal.innerHTML = getInnerTemplate();
   activateElement($alertModal, $taskCard);
   return $alertModal;
@@ -22,16 +22,11 @@ const getInnerTemplate = () => {
 };
 
 const activateElement = ($alertModal, $taskCard) => {
-  const $cancelBtn = $alertModal.querySelector('.util__btn--cancel');
-  const $confirmBtn = $alertModal.querySelector('.util__btn--confirm');
-  $cancelBtn.addEventListener(
-    'click',
-    cancelDeleteCard.bind(null, $alertModal)
-  );
-
-  $confirmBtn.addEventListener(
-    'click',
-    confirmDeleteCard.bind(null, $alertModal, $taskCard)
+  const $cancelBtn = $alertModal.querySelector(".util__btn--cancel");
+  const $confirmBtn = $alertModal.querySelector(".util__btn--confirm");
+  $cancelBtn.addEventListener("click", () => cancelDeleteCard($alertModal));
+  $confirmBtn.addEventListener("click", () =>
+    deleteCard($alertModal, $taskCard)
   );
 };
 
@@ -39,8 +34,8 @@ const cancelDeleteCard = ($alertModal) => {
   $alertModal.remove();
 };
 
-const confirmDeleteCard = async ($alertModal, $taskCard) => {
+const deleteCard = async ($alertModal, $taskCard) => {
   await request.deleteCard($taskCard.dataset.id);
   $alertModal.remove();
-  $taskCard.dispatchEvent(new Event('changeCard', { bubbles: true }));
+  $taskCard.dispatchEvent(new Event("changeCard", { bubbles: true }));
 };
