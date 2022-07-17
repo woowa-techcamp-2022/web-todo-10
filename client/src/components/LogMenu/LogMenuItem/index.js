@@ -2,7 +2,7 @@ import "./index.scss";
 import { ACTION_TYPE_EMOJI_MAP } from "@/constant";
 import { createElement } from "@util/domUtil";
 
-export const makeLogMenuItemElement = (logItemData) => {
+const makeLogMenuItemElement = (logItemData) => {
   const $logMenuItem = createElement("div", "log");
   $logMenuItem.innerHTML = getLogItemTemplate(logItemData);
   return $logMenuItem;
@@ -87,3 +87,5 @@ const calTimePassed = (targetDate) => {
   const date = Math.ceil(hours / 24);
   return `${date}일`;
 };
+
+export default makeLogMenuItemElement;

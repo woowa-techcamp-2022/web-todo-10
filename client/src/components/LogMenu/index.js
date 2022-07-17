@@ -1,9 +1,9 @@
 import "./index.scss";
-import { makeLogMenuItemElement } from "./LogMenuItem";
+import makeLogMenuItemElement from "./LogMenuItem";
 import { createElement, addOrRemoveClass, hasClassName } from "@util/domUtil";
 import request from "@util/fetchUtil";
 
-export const makeLogMenuElement = () => {
+const makeLogMenuElement = () => {
   const $logMenu = createElement("div", "log-menu closed");
   $logMenu.innerHTML = getInnerTemplate();
   activateElement($logMenu);
@@ -68,3 +68,5 @@ const updateLogItems = async ($logMenu) => {
     $logItems.append(makeLogMenuItemElement(logData));
   });
 };
+
+export default makeLogMenuElement;

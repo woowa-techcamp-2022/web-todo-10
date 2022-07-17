@@ -1,8 +1,8 @@
 import "./index.scss";
-import { createElement } from "../../util/domUtil";
+import { createElement } from "@util/domUtil";
 import request from "@util/fetchUtil.js";
 
-export const makeAlertModalElement = ($taskCard) => {
+const makeAlertModalElement = ($taskCard) => {
   const $alertModal = createElement("div", "modal-container");
   $alertModal.innerHTML = getInnerTemplate();
   activateElement($alertModal, $taskCard);
@@ -39,3 +39,5 @@ const deleteCard = async ($alertModal, $taskCard) => {
   $alertModal.remove();
   $taskCard.dispatchEvent(new Event("changeCard", { bubbles: true }));
 };
+
+export default makeAlertModalElement;
