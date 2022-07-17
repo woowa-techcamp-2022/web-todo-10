@@ -1,5 +1,5 @@
 import './index.scss';
-import { makeTaskCardElement } from './TaskCard';
+import makeTaskCardElement from './TaskCard';
 import { makeEditingTaskCardElement } from './EditingTaskCard';
 import { createElement, replaceElement } from '@util/domUtil';
 import request from '@util/fetchUtil';
