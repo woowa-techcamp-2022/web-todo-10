@@ -1,5 +1,5 @@
 import './index.scss';
-import { makeEditingTaskCardElement } from '../EditingTaskCard';
+import makeEditingTaskCardElement from '../EditingTaskCard';
 import makeAlertModalElement from '@/components/Modal';
 import {
   createElement,

@@ -1,21 +1,22 @@
 import './index.scss';
 import request from '@util/fetchUtil.js';
-import { MAX_TASK_DETAIL_LENGTH } from '../../../../constant';
+import { createElement, replaceElement } from '@util/domUtil';
+import { MAX_TASK_DETAIL_LENGTH } from '@/constant';
 
-export const makeEditingTaskCardElement = (
+const makeEditingTaskCardElement = (
   type,
   originalCardData = {},
   $originalTaskCard = null
 ) => {
-  const $editingTaskCard = document.createElement('form');
-  $editingTaskCard.className = 'taskcard';
-  $editingTaskCard.classList.add('editing');
+  const $editingTaskCard = createElement('form', 'taskcard editing');
   $editingTaskCard.dataset.type = type;
   $editingTaskCard.dataset.id = originalCardData?.id;
   $editingTaskCard.innerHTML = getInnerTemplate(originalCardData);
   activateElement($editingTaskCard, $originalTaskCard, type);
   return $editingTaskCard;
 };
+
+export default makeEditingTaskCardElement;
 
 const getInnerTemplate = (originalCardData = {}) => {
   const { title, details } = originalCardData;
@@ -67,12 +68,9 @@ const checkAllInputValidity = ($titleInput, $detailsTextArea, $submitBtn) => {
 };
 
 const cancelEdit = ($editingTaskCard, $originalTaskCard) => {
-  if ($originalTaskCard)
-    $editingTaskCard.parentNode.replaceChild(
-      $originalTaskCard,
-      $editingTaskCard
-    );
-  else $editingTaskCard.remove();
+  if ($originalTaskCard) {
+    replaceElement($editingTaskCard, $originalTaskCard);
+  } else $editingTaskCard.remove();
 };
 
 const handleConfirmBtnClick = async (type, event) => {
