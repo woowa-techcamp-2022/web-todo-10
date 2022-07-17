@@ -1,11 +1,13 @@
 import './index.scss';
-import { makeTaskCardColumnElement } from './TaskCardList';
+import makeTaskCardColumnElement from './TaskCardList';
+import { createElement } from '@util/domUtil';
 
-export const makeTaskBoardElement = (taskListDatas) => {
-  const $taskBoard = document.createElement('section');
-  $taskBoard.className = 'task-board';
+const makeTaskBoardElement = (taskListDatas) => {
+  const $taskBoard = createElement('section', 'task-board');
   taskListDatas.forEach((taskListData) => {
     $taskBoard.append(makeTaskCardColumnElement(taskListData));
   });
   return $taskBoard;
 };
+
+export default makeTaskBoardElement;

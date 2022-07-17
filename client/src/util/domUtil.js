@@ -1,10 +1,10 @@
-export const createElement = (elementType, className = "") => {
+export const createElement = (elementType, className = '') => {
   const element = document.createElement(elementType);
   element.className = className;
   return element;
 };
 
-export const addOrRemoveClass = (element, className, doAdd = "true") => {
+export const addOrRemoveClass = (element, className, doAdd = 'true') => {
   if (doAdd) {
     element.classList.add(className);
   } else {
@@ -21,6 +21,10 @@ export const insertElementAfter = (targetElement, referenceElement) => {
     targetElement,
     referenceElement.nextSibling
   );
+};
+
+export const replaceElement = (originalElement, newElement) => {
+  originalElement.parentNode.replaceChild(newElement, originalElement);
 };
 
 export const hasClassName = (element, className) => {
