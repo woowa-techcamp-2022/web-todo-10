@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const mysql = require('mysql2');
 const pool = require('../config/database');
 const createActiveLog = require('../util/dbQuery');
 
@@ -10,12 +9,10 @@ router.delete('/:id', deleteCardData);
 router.patch('/:id/move', moveCard);
 
 async function addNewCard(req, res) {
-  let connection;
+  const connection = await pool.getConnection();
   const { columnId, title, details } = req.body;
 
   try {
-    connection = await pool.getConnection();
-
     const [[taskColumnData]] = await connection.query(
       `SELECT * FROM taskColumn WHERE idx = ${columnId}`
     );
@@ -58,13 +55,11 @@ UPDATE taskColumn SET taskIds = '[${taskColumnData.taskIds}]' WHERE (idx = ${col
 }
 
 async function updateCardData(req, res) {
-  let connection;
+  const connection = await pool.getConnection();
   const { id: cardId } = req.params;
   const { title, details } = req.body;
 
   try {
-    connection = await pool.getConnection();
-
     const [[taskData]] = await connection.query(
       `SELECT * FROM task WHERE id = ${cardId}`
     );
@@ -105,25 +100,23 @@ async function updateCardData(req, res) {
         details
       )}', columnId = ${taskData.columnId} WHERE (id = ${cardId})`
     );
-    if (connection) connection.release();
     res.json({ status: 'ok', message: '카드가 업데이트됐습니다.' });
   } catch (err) {
     res.json({ err });
+  } finally {
+    connection?.release();
   }
 }
 
 async function deleteCardData(req, res) {
-  let connection;
+  const connection = await pool.getConnection();
   const { id: cardId } = req.params;
 
   try {
-    connection = await pool.getConnection();
-    //잘 나옴
     const [[targetTaskCard]] = await connection.query(
       `SELECT * FROM task WHERE id = ${cardId}`
     );
 
-    //잘 나옴
     const columnId = targetTaskCard.columnId;
     const [[targetTaskColumn]] = await connection.query(
       `SELECT * FROM taskColumn WHERE idx = ${columnId}`
@@ -160,11 +153,9 @@ async function moveCard(req, res) {
   const { originalColumnId, newColumnId, originalIdx, newIdx } = req.body;
   const connection = await pool.getConnection();
   try {
-    //현재 카드의 부모를 새로운 부모로 바꿔준다.
     await connection.query(
       `UPDATE task SET columnId = ${newColumnId} WHERE (id = ${cardId})`
     );
-    //현재 카드 부모에서 기존에 있던 카드를 지워준다.
     const [[originalTaskColumn]] = await connection.query(
       `SELECT * from taskColumn WHERE idx = ${originalColumnId}`
     );
@@ -174,7 +165,6 @@ async function moveCard(req, res) {
       `UPDATE taskColumn SET taskIds = '[${originalTaskColumn.taskIds}]' WHERE (idx = ${originalColumnId})`
     );
 
-    //이동할 카드 부모에서 추가해준다.
     const [[newTaskColumn]] = await connection.query(
       `SELECT * FROM taskColumn WHERE idx = ${newColumnId}`
     );

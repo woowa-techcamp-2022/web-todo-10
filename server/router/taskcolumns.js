@@ -1,15 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const mysql = require('mysql2');
 const pool = require('../config/database');
 
 router.get('/', getAllTaskColumn);
 
 async function getAllTaskColumn(req, res) {
-  let connection;
+  const connection = await pool.getConnection();
   const allTaskColumnData = [];
   try {
-    connection = await pool.getConnection();
     const [taskColumns] = await connection.query(`SELECT * FROM taskColumn`);
 
     for (const taskColumn of taskColumns) {

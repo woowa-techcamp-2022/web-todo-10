@@ -1,17 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const mysql = require('mysql2');
 const pool = require('../config/database');
 
 router.get('/:id', getTaskColumn);
 router.patch('/:id', updateColumnTitle);
 
 async function getTaskColumn(req, res) {
-  let connection;
+  const connection = await pool.getConnection();
   const { id: columnId } = req.params;
   try {
-    connection = await pool.getConnection();
-
     const [[taskColumn]] = await connection.query(
       `SELECT * FROM taskColumn WHERE idx = ${columnId};`
     );
@@ -32,11 +29,10 @@ async function getTaskColumn(req, res) {
 }
 
 async function updateColumnTitle(req, res) {
+  const connection = await pool.getConnection();
   const { id: columnId } = req.params;
   const { title } = req.body;
-  let connection;
   try {
-    connection = await pool.getConnection();
     const [[targetTaskColumn]] = await connection.query(
       `SELECT * FROM taskColumn WHERE idx = ${columnId}`
     );
