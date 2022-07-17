@@ -1,13 +1,13 @@
-@import '@style/variable.scss';
+@import "@style/variable.scss";
 
-.header {
+header {
   height: 7rem;
   margin-bottom: 1.5rem;
   display: flex;
   align-items: center;
+}
 
-  &__title {
-    min-width: fit-content;
-    font-size: 2rem;
-  }
+.header__title {
+  min-width: fit-content;
+  font-size: 2rem;
 }

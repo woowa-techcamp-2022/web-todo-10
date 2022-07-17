@@ -1,3 +1,9 @@
+export const createElement = (elementType, className = "") => {
+  const element = document.createElement(elementType);
+  element.className = className;
+  return element;
+};
+
 export const insertElementBefore = (targetElement, referenceElement) => {
   referenceElement.parentElement.insertBefore(targetElement, referenceElement);
 };
