@@ -4,6 +4,14 @@ export const createElement = (elementType, className = "") => {
   return element;
 };
 
+export const addOrRemoveClass = (element, className, doAdd = "true") => {
+  if (doAdd) {
+    element.classList.add(className);
+  } else {
+    element.classList.remove(className);
+  }
+};
+
 export const insertElementBefore = (targetElement, referenceElement) => {
   referenceElement.parentElement.insertBefore(targetElement, referenceElement);
 };
