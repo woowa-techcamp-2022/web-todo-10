@@ -158,6 +158,7 @@ git clone https://github.com/woowa-techcamp-2022/web-todo-10.git
 
 cd web-todo-10/client
 npm install
+npx msw init dist/ --save
 npm run dev
 ```
 
