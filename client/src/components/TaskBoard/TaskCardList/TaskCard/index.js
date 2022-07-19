@@ -1,24 +1,27 @@
 import './index.scss';
-import { makeEditingTaskCardElement } from '../EditingTaskCard';
-import { makeAlertModalElement } from '../../../Modal';
+import makeEditingTaskCardElement from '../EditingTaskCard';
+import makeAlertModalElement from '@/components/Modal';
 import {
+  createElement,
   insertElementBefore,
   insertElementAfter,
   hasClassName,
   getElementIndex,
+  getElementPos,
+  replaceElement,
 } from '@util/domUtil.js';
 import Point from '@util/Point';
-import { getElementPos } from '@util/domUtil';
 import request from '@util/fetchUtil';
 
-export const makeTaskCardElement = (cardData) => {
-  const $taskCard = document.createElement('li');
-  $taskCard.className = 'taskcard';
+const makeTaskCardElement = (cardData) => {
+  const $taskCard = createElement('li', 'taskcard');
   $taskCard.dataset.id = cardData.id;
   $taskCard.innerHTML = getTaskCardInnerTemplate(cardData);
   activateElement($taskCard, cardData);
   return $taskCard;
 };
+
+export default makeTaskCardElement;
 
 const getTaskCardInnerTemplate = (cardData) => {
   const { title, details, author } = cardData;
@@ -42,23 +45,17 @@ const getTaskDetailTemplate = (details) => {
 
 const activateElement = ($taskCard, cardData) => {
   const $deleteBtn = $taskCard.querySelector('.taskcard__delete-btn');
-  $taskCard.addEventListener(
-    'dblclick',
-    convertToEditMode.bind(null, $taskCard, cardData)
+  $deleteBtn.addEventListener('mouseover', () =>
+    showDeleteWarning($taskCard, $deleteBtn)
   );
-
-  $deleteBtn.addEventListener(
-    'mouseover',
-    showDeleteWarning.bind(null, $taskCard, $deleteBtn)
+  $deleteBtn.addEventListener('mouseleave', () =>
+    showDeleteWarning($taskCard, $deleteBtn)
   );
-  $deleteBtn.addEventListener(
-    'mouseleave',
-    showDeleteWarning.bind(null, $taskCard, $deleteBtn)
+  $taskCard.addEventListener('mousedown', (e) =>
+    handleMouseDownEvent($taskCard, e)
   );
-
-  $taskCard.addEventListener(
-    'mousedown',
-    handleMouseDownEvent.bind(null, $taskCard)
+  $taskCard.addEventListener('dblclick', () =>
+    convertToEditMode($taskCard, cardData)
   );
 };
 
@@ -68,7 +65,7 @@ const convertToEditMode = ($taskCard, cardData) => {
     cardData,
     $taskCard
   );
-  $taskCard.parentNode.replaceChild($editingCardElement, $taskCard);
+  replaceElement($taskCard, $editingCardElement);
 };
 
 const showDeleteWarning = ($taskCard, $deleteBtn) => {

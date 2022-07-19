@@ -1,8 +1,8 @@
-import './index.scss';
+import "./index.scss";
+import { createElement } from "@util/domUtil";
 
-export const makeHeaderElement = () => {
-  const $header = document.createElement('header');
-  $header.className = 'header';
+const makeHeaderElement = () => {
+  const $header = createElement("header");
   $header.innerHTML = getInnerTemplate();
   return $header;
 };
@@ -12,3 +12,5 @@ const getInnerTemplate = () => {
       <h1 class='header__title'>TO-DO LIST</h1>
     `;
 };
+
+export default makeHeaderElement;

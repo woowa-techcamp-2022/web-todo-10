@@ -1,9 +1,9 @@
-import './index.scss';
-import { ACTION_TYPE_EMOJI_MAP } from '@/constant';
+import "./index.scss";
+import { ACTION_TYPE_EMOJI_MAP } from "@/constant";
+import { createElement } from "@util/domUtil";
 
-export const makeLogMenuItemElement = (logItemData) => {
-  const $logMenuItem = document.createElement('div');
-  $logMenuItem.className = 'log';
+const makeLogMenuItemElement = (logItemData) => {
+  const $logMenuItem = createElement("div", "log");
   $logMenuItem.innerHTML = getLogItemTemplate(logItemData);
   return $logMenuItem;
 };
@@ -77,7 +77,7 @@ const highlightText = (text) => {
 
 const calTimePassed = (targetDate) => {
   const millisecond = new Date().getTime() - targetDate.getTime();
-  if (millisecond < 1000) return '방금';
+  if (millisecond < 1000) return "방금";
   const seconds = Math.ceil(millisecond / 1000);
   if (seconds < 60) return `${seconds}초`;
   const minutes = Math.ceil(seconds / 60);
@@ -87,3 +87,5 @@ const calTimePassed = (targetDate) => {
   const date = Math.ceil(hours / 24);
   return `${date}일`;
 };
+
+export default makeLogMenuItemElement;

@@ -1,17 +1,16 @@
 import './index.scss';
-import { makeTaskCardElement } from './TaskCard';
-import { makeEditingTaskCardElement } from './EditingTaskCard';
+import makeTaskCardElement from './TaskCard';
+import makeEditingTaskCardElement from './EditingTaskCard';
+import { createElement, replaceElement } from '@util/domUtil';
 import request from '@util/fetchUtil';
-import { hasClassName } from '../../../util/domUtil';
 
-export const makeTaskCardColumnElement = (cardListData) => {
+const makeTaskCardColumnElement = (cardListData) => {
   const { columnName, tasks, id: columnId } = cardListData;
-  const $taskCardColumn = document.createElement('section');
-  $taskCardColumn.className = 'taskcard-column';
+  const $taskCardColumn = createElement('section', 'taskcard-column');
   $taskCardColumn.dataset.id = columnId;
   $taskCardColumn.innerHTML = getHeaderTemplate(columnName, tasks.length);
   $taskCardColumn.append(makeTaskListElement(tasks));
-  activateElement($taskCardColumn, columnId);
+  activateElement($taskCardColumn);
   return $taskCardColumn;
 };
 
@@ -30,23 +29,18 @@ const getHeaderTemplate = (columnName, tasksCnt) => {
 };
 
 const makeTaskListElement = (tasks) => {
-  const $taskCardList = document.createElement('ul');
-  $taskCardList.classList = 'taskcard-list';
+  const $taskCardList = createElement('ul', 'taskcard-list');
   tasks.forEach((taskData) =>
     $taskCardList.append(makeTaskCardElement(taskData))
   );
   return $taskCardList;
 };
 
-const activateElement = ($taskCardColumn, columnId) => {
+const activateElement = ($taskCardColumn) => {
   const $addBtn = $taskCardColumn.querySelector('.taskcard-column__add-btn');
-  $addBtn.addEventListener(
-    'click',
-    handleAddBtnClick.bind(null, $taskCardColumn)
-  );
-  $taskCardColumn.addEventListener(
-    'changeCard',
-    updateList.bind(null, $taskCardColumn, columnId)
+  $addBtn.addEventListener('click', () => handleAddBtnClick($taskCardColumn));
+  $taskCardColumn.addEventListener('changeCard', () =>
+    updateList($taskCardColumn)
   );
 };
 
@@ -65,8 +59,11 @@ const addNewTaskCard = ($taskCardList) => {
   $taskCardList.insertAdjacentElement('afterbegin', $editingTaskCard);
 };
 
-const updateList = async ($taskCardColumn, columnId) => {
+const updateList = async ($taskCardColumn) => {
+  const columnId = $taskCardColumn.dataset.id;
   const updatedColumnData = await request.getList(columnId);
   const $updatedListElement = makeTaskCardColumnElement(updatedColumnData);
-  $taskCardColumn.parentNode.replaceChild($updatedListElement, $taskCardColumn);
+  replaceElement($taskCardColumn, $updatedListElement);
 };
+
+export default makeTaskCardColumnElement;
